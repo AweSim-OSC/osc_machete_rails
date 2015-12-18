@@ -3,16 +3,6 @@ require "osc_machete_rails/submittable"
 require "osc_machete_rails/statusable"
 require "osc_machete_rails/workflow"
 
-# module OscMacheteRails
-#   # make OSC::Machete::SimpleJob an alias of this module for backwards
-#   # compatibility
-#   OSC::Machete::SimpleJob = self
-# end
-# require "osc_machete_rails/submittable"
-# require "osc_machete_rails/statusable"
-# require "osc_machete_rails/workflow"
-
-
 module OscMacheteRails
   # Include the Submittable and Statusable modules by default when you include
   # this module
