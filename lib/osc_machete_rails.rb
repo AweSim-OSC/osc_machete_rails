@@ -1,3 +1,4 @@
+require "osc/machete"
 require "osc_machete_rails/engine"
 require "osc_machete_rails/submittable"
 require "osc_machete_rails/statusable"
