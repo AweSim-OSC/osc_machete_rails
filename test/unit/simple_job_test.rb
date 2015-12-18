@@ -1,7 +1,7 @@
 require 'minitest/autorun'
 require 'osc/machete'
 
-class SimpleJobTest < Minitest::Test
+class SimpleJobTest < Minitest::Unit::TestCase
   def setup
   end
   

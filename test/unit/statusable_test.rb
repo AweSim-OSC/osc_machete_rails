@@ -1,7 +1,7 @@
 require 'minitest/autorun'
 require 'osc/machete'
 
-class StatusableTest < Minitest::Test
+class StatusableTest < Minitest::Unit::TestCase
   def setup
     # create an object that is statusable and has the status value set
     @job = OpenStruct.new

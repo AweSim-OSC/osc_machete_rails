@@ -17,6 +17,10 @@ Gem::Specification.new do |s|
   s.test_files = Dir["test/**/*"]
 
   s.add_dependency "rails", "~> 4.0.0"
+  # TODO: uncomment after removing gem line in Gemfile
+  # s.add_dependency "osc-machete", "~> 1.0.0"
 
   s.add_development_dependency "sqlite3"
+  s.add_development_dependency "mocha"
+  s.add_development_dependency "minitest"# , ">= 5.0"
 end

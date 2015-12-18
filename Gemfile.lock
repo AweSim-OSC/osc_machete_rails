@@ -4,6 +4,13 @@ PATH
     osc_machete_rails (0.0.1)
       rails (~> 4.0.0)
 
+PATH
+  remote: /nfs/17/efranz/dev/osc-machete
+  specs:
+    osc-machete (0.6.3)
+      mustache
+      nokogiri
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -39,9 +46,16 @@ GEM
     mail (2.5.4)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
+    metaclass (0.0.1)
     mime-types (1.25)
+    mini_portile (0.6.1)
     minitest (4.7.5)
+    mocha (1.1.0)
+      metaclass (~> 0.0.1)
     multi_json (1.8.2)
+    mustache (0.99.5)
+    nokogiri (1.6.6.2)
+      mini_portile (~> 0.6.0)
     polyglot (0.3.3)
     rack (1.5.2)
     rack-test (0.6.2)
@@ -82,5 +96,8 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  minitest
+  mocha
+  osc-machete!
   osc_machete_rails!
   sqlite3
