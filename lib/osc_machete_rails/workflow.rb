@@ -90,7 +90,7 @@ module OscMacheteRails
       #
       # @return [Location] The location of the staged and rendered template.
       def render_mustache_files(staged_dir, template_view)
-        Location.new(staged_dir).render(template_view)
+        OSC::Machete::Location.new(staged_dir).render(template_view)
       end
 
       # Actions to perform after staging
