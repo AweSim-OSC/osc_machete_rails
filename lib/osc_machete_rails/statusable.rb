@@ -138,17 +138,18 @@ module OscMacheteRails
     #
     # @param [Boolean, nil] force Force the update. (Default: false)
     def update_status!(force: false)
-      if submitted? && (! completed? || force)
-        # if the status of the job is nil, the job is no longer in the batch
-        # system, so it is either completed or failed
+      # by default only update if its an active job
+      if status.active? || force
+
+        # get the current status from the system
         current_status = job.status
-        if current_status.nil? || current_status.to_s == "C"
-          current_status = results_valid? ? "C" : "F"
+
+        # if job is done, lets re-validate
+        if current_status.completed? || current_status.failed?
+          current_status = results_valid? ? OSC::Machete::Status.completed : OSC::Machete::Status.failed
         end
 
-        if current_status.to_s != self.status.to_s || force
-          # FIXME: how do we integrate logging into Rails apps?
-          # puts "status changed. current_status: #{current_status} and status is #{status}"
+        if current_status != self.status || force
           self.status = current_status
           self.save
         end
