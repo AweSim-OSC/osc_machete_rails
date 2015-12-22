@@ -4,6 +4,17 @@ module OscMacheteRails
   module Statusable
     extend Gem::Deprecate
 
+    delegate :completed?, :failed?, :active?, to: :status
+
+    def status=(s)
+      super(s.nil? ? s : s.to_s)
+    end
+
+    # getter returns a Status value from CHAR or a Status value
+    def status
+      OSC::Machete::Status.new(super)
+    end
+
     # Initialize the object
     def self.included(obj)
       # TODO: throw warning if we detect that pbsid, status, save,
@@ -46,24 +57,8 @@ module OscMacheteRails
       ! (pbsid.nil? || pbsid == "")
     end
 
-    # Returns true if the job is no longer running.
-    #
-    # If the job status is completed or failed
-    # return true.
-    #
-    # @return [Boolean] true if job is no longer running.
-    def completed?
-      status.to_s == "C" || status.to_s == "F"
-    end
 
-    # Returns true if the job has failed.
-    #
-    # @return [Boolean] true if the job has failed.
-    def failed?
-      status.to_s == "F"
-    end
-
-    # Returns true if in a running state (R,Q,H)
+    # Returns true if in an active state
     #
     # DEPRECATED: Use 'active?' instead.
     #
@@ -75,18 +70,11 @@ module OscMacheteRails
 
     # Returns true if in a running state (R,Q,H)
     #
-    # @return [Boolean] true if in a running state.
+    # @return [Boolean] true if in an active state
     def running_queued_or_hold?
       active?
     end
     deprecate :running_queued_or_hold?, "Use active? instead", 2015, 03
-
-    # Returns true if the job has been submitted and is not completed.
-    #
-    # @return [Boolean] true if the job has been submitted and is not completed.
-    def active?
-      submitted? && ! completed?
-    end
 
     # Returns a string representing a human readable status label.
     #
@@ -100,14 +88,7 @@ module OscMacheteRails
     #
     # @return [String] A String representing a human readable status label.
     def status_human_readable
-      statuses = {"H" => "Hold", "R" => "Running", "Q" => "Queued", "F" => "Failed", "C" => "Completed"}
-
-      if ! submitted?
-        "Not Submitted"
-      else
-        # FIXME: is this safe? perhaps a default?
-        statuses[status.to_s]
-      end
+      status.inspect
     end
 
     # Build the results validation method name from script_name attr

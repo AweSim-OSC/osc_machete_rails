@@ -37,11 +37,11 @@ class StatusableTest < Minitest::Unit::TestCase
     assert_equal "Running", @job.status_human_readable
 
     @job.status = :C
-    assert @job.completed?, "completed? should return true when status is F or C"
+    assert @job.completed?, "completed? should return true when status is C"
     assert ! @job.failed?, "failed? should return false when status is not F"
 
     @job.status = :F
-    assert @job.completed?, "completed? should return true when status is F or C"
+    assert ! @job.completed?, "completed? should return false when status is F"
     assert @job.failed?, "failed? should return true when status is F"
   end
 
@@ -58,11 +58,11 @@ class StatusableTest < Minitest::Unit::TestCase
     assert_equal "Running", @job.status_human_readable
 
     @job.status = "C"
-    assert @job.completed?, "completed? should return true when status is F or C"
+    assert @job.completed?, "completed? should return true when status is C"
     assert ! @job.failed?, "failed? should return false when status is not F"
 
     @job.status = "F"
-    assert @job.completed?, "completed? should return true when status is F or C"
+    assert ! @job.completed?, "completed? should return false when status is F"
     assert @job.failed?, "failed? should return true when status is F"
   end
 
