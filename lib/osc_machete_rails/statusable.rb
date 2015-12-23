@@ -4,7 +4,7 @@ module OscMacheteRails
   module Statusable
     extend Gem::Deprecate
 
-    delegate :completed?, :failed?, :active?, to: :status
+    delegate :submitted?, :completed?, :failed?, :active?, to: :status
 
     def status=(s)
       super(s.nil? ? s : s.to_s)
@@ -46,18 +46,6 @@ module OscMacheteRails
       script_path = respond_to?(:script_name) ? Pathname.new(job_path).join(script_name) : nil
       OSC::Machete::Job.new(pbsid: pbsid, script: script_path)
     end
-
-    # Returns true if the job has been submitted.
-    #
-    # If the pbsid is nil or the pbsid is an empty string,
-    # then the job hasn't been submitted and method returns false.
-    #
-    # @return [Boolean] true if the job has been submitted.
-    # FIXME: do we need this? or can we use status.submitted?
-    def submitted?
-      ! (pbsid.nil? || pbsid == "")
-    end
-
 
     # Returns a string representing a human readable status label.
     #
