@@ -158,6 +158,11 @@ module OscMacheteRails
       end
 
       def completed?
+        # FIXME: done? could do either F or C; also, this is reducing
+        # also, this is reducing the set of jobs to a single value...
+        # so combining all the jobs to a single list of statuses would be
+        # helpful...
+        #
         # true if all jobs are completed
         submitted? && jobs_active_record_relation.where(status: ["F", "C"]).count == jobs_active_record_relation.count
       end
@@ -174,24 +179,15 @@ module OscMacheteRails
       deprecate :running_queued_or_hold?, "Use active? instead", 2015, 03
 
       def active?
+        # FIXME: ! completed or ! failed
         submitted? && ! completed?
       end
 
       # FIXME: better name for this?
+      # FIXME: a test for this?
       def status_human_readable
-        if failed?
-          "Failed"
-        elsif completed?
-          "Completed"
-        elsif jobs_active_record_relation.where(status: "R").any?
-          "Running"
-        elsif jobs_active_record_relation.where(status: "Q").any?
-          "Queued"
-        elsif jobs_active_record_relation.where(status: "H").any?
-          "Hold"
-        else
-          "Not Submitted"
-        end
+        statuses = jobs_active_record_relation.to_a.map(&:status)
+        statuses.empty? ? OSC::Machete::Status.not_submitted : statuses.reduce(&:+).inspect
       end
     end
 
