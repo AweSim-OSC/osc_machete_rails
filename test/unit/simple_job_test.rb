@@ -21,7 +21,6 @@ class SimpleJobTest < Minitest::Unit::TestCase
     # verify responds to status methods
     assert_respond_to obj, :submitted?
     assert_respond_to obj, :completed?
-    assert_respond_to obj, :status_human_readable
     assert_respond_to obj, :update_status!
     
     # verify responds to submit methods
@@ -63,7 +62,6 @@ class SimpleJobTest < Minitest::Unit::TestCase
     # verify responds to status methods
     assert_respond_to obj, :submitted?
     assert_respond_to obj, :completed?
-    assert_respond_to obj, :status_human_readable
     assert_respond_to obj, :update_status!
     
     # verify does not respond to submit methods

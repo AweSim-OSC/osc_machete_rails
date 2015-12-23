@@ -30,11 +30,11 @@ class StatusableTest < Minitest::Unit::TestCase
     assert @job.submitted?
     assert ! @job.completed?
     assert @job.active?
-    assert_equal "Queued", @job.status_human_readable
+    assert_equal "Queued", @job.status.inspect
 
     @job.status = :R
     assert @job.active?
-    assert_equal "Running", @job.status_human_readable
+    assert_equal "Running", @job.status.inspect
 
     @job.status = :C
     assert @job.completed?, "completed? should return true when status is C"
@@ -51,11 +51,11 @@ class StatusableTest < Minitest::Unit::TestCase
     assert @job.submitted?
     assert ! @job.completed?
     assert @job.active?
-    assert_equal "Queued", @job.status_human_readable
+    assert_equal "Queued", @job.status.inspect
 
     @job.status = "R"
     assert @job.active?
-    assert_equal "Running", @job.status_human_readable
+    assert_equal "Running", @job.status.inspect
 
     @job.status = "C"
     assert @job.completed?, "completed? should return true when status is C"

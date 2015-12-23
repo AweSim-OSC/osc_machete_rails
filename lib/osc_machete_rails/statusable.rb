@@ -47,21 +47,6 @@ module OscMacheteRails
       OSC::Machete::Job.new(pbsid: pbsid, script: script_path)
     end
 
-    # Returns a string representing a human readable status label.
-    #
-    # Status options:
-    #   Hold
-    #   Running
-    #   Queued
-    #   Failed
-    #   Completed
-    #   Not Submitted
-    #
-    # @return [String] A String representing a human readable status label.
-    def status_human_readable
-      status.inspect
-    end
-
     # Build the results validation method name from script_name attr
     # using ActiveSupport methods
     #
