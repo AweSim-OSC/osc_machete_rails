@@ -151,27 +151,12 @@ module OscMacheteRails
 
     # depends on jobs_active_record_relation being defined
     module StatusMethods
+      delegate :submitted?, :completed?, :failed?, :active?, to: :status
 
       # reduce the jobs to a single status value
       def status
         statuses = jobs_active_record_relation.to_a.map(&:status)
         statuses.empty? ? OSC::Machete::Status.not_submitted : statuses.reduce(&:+)
-      end
-
-      def submitted?
-        status.submitted?
-      end
-
-      def completed?
-        status.completed?
-      end
-
-      def failed?
-        status.failed?
-      end
-
-      def active?
-        status.active?
       end
     end
 
