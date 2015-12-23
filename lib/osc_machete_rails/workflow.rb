@@ -151,37 +151,27 @@ module OscMacheteRails
 
     # depends on jobs_active_record_relation being defined
     module StatusMethods
-      extend Gem::Deprecate
+
+      # reduce the jobs to a single status value
+      def status
+        statuses = jobs_active_record_relation.to_a.map(&:status)
+        statuses.empty? ? OSC::Machete::Status.not_submitted : statuses.reduce(&:+)
+      end
 
       def submitted?
-        jobs_active_record_relation.count > 0
+        status.submitted?
       end
 
       def completed?
-        # FIXME: done? could do either F or C; also, this is reducing
-        # also, this is reducing the set of jobs to a single value...
-        # so combining all the jobs to a single list of statuses would be
-        # helpful...
-        #
-        # true if all jobs are completed
-        submitted? && jobs_active_record_relation.where(status: ["F", "C"]).count == jobs_active_record_relation.count
+        status.completed?
       end
 
       def failed?
-        # true if any of the jobs .failed?
-        jobs_active_record_relation.where(status: ["F"]).any?
+        status.failed?
       end
 
       def active?
-        # FIXME: ! completed or ! failed
-        submitted? && ! completed?
-      end
-
-      # FIXME: better name for this?
-      # FIXME: a test for this?
-      def status_human_readable
-        statuses = jobs_active_record_relation.to_a.map(&:status)
-        statuses.empty? ? OSC::Machete::Status.not_submitted : statuses.reduce(&:+).inspect
+        status.active?
       end
     end
 
