@@ -53,28 +53,11 @@ module OscMacheteRails
     # then the job hasn't been submitted and method returns false.
     #
     # @return [Boolean] true if the job has been submitted.
+    # FIXME: do we need this? or can we use status.submitted?
     def submitted?
       ! (pbsid.nil? || pbsid == "")
     end
 
-
-    # Returns true if in an active state
-    #
-    # DEPRECATED: Use 'active?' instead.
-    #
-    # @return [Boolean] true if in a running state.
-    def running?
-      active?
-    end
-    deprecate :running?, "Use active? instead", 2015, 03
-
-    # Returns true if in a running state (R,Q,H)
-    #
-    # @return [Boolean] true if in an active state
-    def running_queued_or_hold?
-      active?
-    end
-    deprecate :running_queued_or_hold?, "Use active? instead", 2015, 03
 
     # Returns a string representing a human readable status label.
     #

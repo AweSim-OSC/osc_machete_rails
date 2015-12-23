@@ -172,12 +172,6 @@ module OscMacheteRails
         jobs_active_record_relation.where(status: ["F"]).any?
       end
 
-      # returns true if in a running state (R,Q,H) i.e. not completed and not submitted
-      def running_queued_or_hold?
-        active?
-      end
-      deprecate :running_queued_or_hold?, "Use active? instead", 2015, 03
-
       def active?
         # FIXME: ! completed or ! failed
         submitted? && ! completed?
