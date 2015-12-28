@@ -110,6 +110,21 @@ class StatusableTest < Minitest::Unit::TestCase
     @job.update_status!
   end
 
+  def test_update_status_with_not_submitted_with_pbsid
+    define_job_singleton_method @job, OSC::Machete::Status.running
+    @job.expects(:"save").at_least_once
+    @job.status = nil
+    @job.update_status!
+  end
+
+  def test_update_status_with_not_submitted_without_pbsid
+    define_job_singleton_method @job, OSC::Machete::Status.running
+    @job.expects(:"save").never
+    @job.pbsid = nil
+    @job.status = nil
+    @job.update_status!
+  end
+
   private
 
   def define_job_singleton_method(obj, status)

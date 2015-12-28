@@ -95,7 +95,7 @@ module OscMacheteRails
     # @param [Boolean, nil] force Force the update. (Default: false)
     def update_status!(force: false)
       # by default only update if its an active job
-      if status.active? || force
+      if  (status.not_submitted? && pbsid) || status.active? || force
 
         # get the current status from the system
         current_status = job.status
