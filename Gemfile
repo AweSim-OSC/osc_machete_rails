@@ -10,7 +10,7 @@ gemspec
 # Git. Remember to move these dependencies to your gemspec before releasing
 # your gem to rubygems.org.
 #
-gem "osc-machete", path: "/nfs/17/efranz/dev/osc-machete"
+# gem "osc-machete", path: "/nfs/17/efranz/dev/osc-machete"
 
 # To use debugger
 # gem 'debugger'
