@@ -153,7 +153,17 @@ module OscMacheteRails
     module StatusMethods
       delegate :submitted?, :completed?, :failed?, :active?, to: :status
 
-      # reduce the jobs to a single status value
+      # Reduce the jobs to a single OSC::Machete:Status value
+      #
+      # Assumes `jobs_active_record_relation` is a Statusable ActiveRecord
+      # model. Get array of status values (one for each job) and then add them
+      # together to get one value. OSC::Machete::Status#+ is overridden to 
+      # return the highest precendent status value when adding two together.
+      #
+      # FIXME: it might be clearer in code to use `max` instead of `+` i.e.
+      # statuses.reduce(&:max) and rename OSC::Machete::Status#+.
+      #
+      # @return [OSC::Machete::Status] a single value representing the status 
       def status
         statuses = jobs_active_record_relation.to_a.map(&:status)
         statuses.empty? ? OSC::Machete::Status.not_submitted : statuses.reduce(&:+)
