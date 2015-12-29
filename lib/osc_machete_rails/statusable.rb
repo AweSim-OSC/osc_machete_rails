@@ -45,9 +45,12 @@ module OscMacheteRails
       # scope to get all of the jobs that are in an active state
       # or have a pbsid
       def active
-        # what about OR i.e. where 
+        # FIXME: what about OR i.e. where 
+        #
         #     status in active_values OR (pbsid != null and status == null)
-        where(status: OSC::Machete::Status.active_values)
+        #
+        # will need to use STRING for the sql instead of this.
+        where(status: OSC::Machete::Status.active_values.map(&:to_s))
       end
     end
 
