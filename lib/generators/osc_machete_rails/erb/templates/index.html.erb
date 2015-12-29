@@ -6,6 +6,7 @@
   <thead>
     <tr>
       <th>#</th>
+      <th>Status</th>
 <% attributes.reject(&:password_digest?).each do |attribute| -%>
       <th><%= attribute.human_name %></th>
 <% end -%>
@@ -17,12 +18,13 @@
     <%% @<%= plural_table_name %>.each do |<%= singular_table_name %>| %>
       <tr>
         <td><%%= <%= singular_table_name %>.id %></td>
+        <td><%%= job_status_label(<%= singular_table_name %>) %></td>
 <% attributes.reject(&:password_digest?).each do |attribute| -%>
         <td><%%= <%= singular_table_name %>.<%= attribute.name %> %></td>
 <% end -%>
-        <td><%%= link_to 'Submit', submit_<%= singular_table_name %>_path(<%= singular_table_name %>), class: 'btn btn-success btn-sm' %></td>
+<td><%%= link_to 'Submit', submit_<%= singular_table_name %>_path(<%= singular_table_name %>), method: :put, class: 'btn btn-success btn-sm' unless <%= singular_table_name %>.submitted? %></td>
         <td><%%= link_to 'Show', <%= singular_table_name %>, class: 'btn btn-primary btn-sm' %></td>
-        <td><%%= link_to 'Edit', edit_<%= singular_table_name %>_path(<%= singular_table_name %>), class: 'btn btn-default btn-sm' %></td>
+        <td><%%= link_to 'Edit', edit_<%= singular_table_name %>_path(<%= singular_table_name %>), class: 'btn btn-default btn-sm' unless <%= singular_table_name %>.submitted? %></td>
         <td><%%= link_to 'Destroy', <%= singular_table_name %>, method: :delete, class: 'btn btn-danger btn-sm', data: { confirm: 'Are you sure?' } %></td>
       </tr>
     <%% end %>
