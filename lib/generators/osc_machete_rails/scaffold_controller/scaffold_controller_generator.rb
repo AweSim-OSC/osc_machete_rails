@@ -16,11 +16,6 @@ class OscMacheteRails::ScaffoldControllerGenerator < Rails::Generators::Scaffold
   # override ScaffoldControllerGenerator
   hook_for :template_engine
 
-  # override ScaffoldControllerGenerator
-  hook_for :helper, as: :scaffold do |invoked|
-    invoke invoked, [ controller_name ]
-  end
-
   # remove hook for jbuilder
   remove_hook_for :jbuilder
 end
