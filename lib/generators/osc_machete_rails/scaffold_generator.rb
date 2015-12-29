@@ -1,6 +1,8 @@
 require 'rails/generators/rails/scaffold/scaffold_generator'
 
 class OscMacheteRails::ScaffoldGenerator < Rails::Generators::ScaffoldGenerator
+  source_root File.expand_path('../templates', __FILE__)
+
   attr_reader :orig_args
 
   def initialize(args, *options)
