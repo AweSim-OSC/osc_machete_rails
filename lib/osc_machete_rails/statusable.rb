@@ -2,7 +2,7 @@ module OscMacheteRails
   # Methods that deal with pbs batch job status management
   # within a Rails ActiveRecord model
   module Statusable
-    extend Gem::Deprecate
+
 
     delegate :submitted?, :completed?, :failed?, :active?, to: :status
 
@@ -15,19 +15,39 @@ module OscMacheteRails
       OSC::Machete::Status.new(super)
     end
 
-    # Initialize the object
-    def self.included(obj)
-      # TODO: throw warning if we detect that pbsid, status, save,
-      # etc. are not apart of this; i.e.
-      # Rails.logger.warn if Module.constants.include?(:Rails) && (! obj.respond_to?(:pbsid))
-      # etc.
+    # track the classes that include this module
+    def self.included(base)
+      @classes ||= []
+      @classes << base.name
 
-      # in Rails ActiveRecord objects after loaded from the database,
-      # update the status
-      if obj.respond_to?(:after_find)
-        obj.after_find do |simple_job|
-          simple_job.update_status!
-        end
+      base.send(:extend, ClassMethods)
+    end
+
+    def self.classes
+      @classes
+    end
+
+    def self.update_status_of_all_active_jobs
+      self.classes.each do |cls|
+        #FIXME: problems with approach
+        #  - doesn't capture jobs that have pbsid and no cached status unless
+        #    active includes that
+        #  - requires at least 1 (if not 2) db queries for each Job model
+        #    and if we are thinking about doing this on each request...
+        #    would be more efficient to know the resource being requested
+        #    and update models just for that...
+        cls.active.to_a.each(&:update_status!) if cls.respond_to?(:active)
+      end
+    end
+
+    # class methods to extend a model with
+    module ClassMethods
+      # scope to get all of the jobs that are in an active state
+      # or have a pbsid
+      def active
+        # what about OR i.e. where 
+        #     status in active_values OR (pbsid != null and status == null)
+        where(status: OSC::Machete::Status.active_values)
       end
     end
 
