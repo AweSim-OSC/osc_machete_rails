@@ -3,7 +3,7 @@ require_dependency "<%= namespaced_path %>/application_controller"
 <% end -%>
 <% module_namespacing do -%>
 class <%= controller_class_name %>Controller < ApplicationController
-  before_action :set_<%= singular_table_name %>, only: [:show, :edit, :update, :destroy, :submit]
+  before_action :set_<%= singular_table_name %>, only: [:show, :edit, :update, :destroy, :submit, :copy]
 
   # GET <%= route_url %>
   def index
@@ -57,6 +57,13 @@ class <%= controller_class_name %>Controller < ApplicationController
       @<%= singular_table_name %>.submit
       redirect_to <%= index_helper %>_url, notice: <%= "'#{human_name} was successfully submitted.'" %>
     end
+  end
+
+  # PUT <%= route_url %>/1/copy
+  def copy
+    @<%= singular_table_name %> = @<%= singular_table_name %>.copy
+
+    render template: "<%= plural_table_name %>/edit"
   end
 
   private

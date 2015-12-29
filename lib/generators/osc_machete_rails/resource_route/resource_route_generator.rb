@@ -12,6 +12,7 @@ class OscMacheteRails::ResourceRouteGenerator < Rails::Generators::NamedBase
   #       resources :products do
   #         member do
   #           put 'submit'
+  #           put 'copy'
   #         end
   #       end
   #     end
@@ -28,6 +29,7 @@ class OscMacheteRails::ResourceRouteGenerator < Rails::Generators::NamedBase
     write("resources :#{file_name.pluralize} do", route_length + 1)
     write("member do", route_length + 2)
     write("put 'submit'", route_length + 3)
+    write("put 'copy'", route_length + 3)
     write("end", route_length + 2)
     write("end", route_length + 1)
 

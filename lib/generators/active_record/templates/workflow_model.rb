@@ -25,5 +25,11 @@ class <%= class_name %> < <%= parent_class_name.classify %>
   def build_jobs(staged_dir, job_list = [])
     job_list << OSC::Machete::Job.new(script: staged_dir.join("main.sh"))
   end
+
+  # Make copy of workflow
+  def copy
+    new_<%= singular_table_name %> = self.dup
+    new_<%= singular_table_name %>
+  end
 end
 <% end -%>
