@@ -1,8 +1,12 @@
 Description:
-    Explain the generator
+    Stubs out a new job model. Pass the model name, either CamelCased or
+    under_scored, and an optional list of attribute pairs as arguments.
 
 Example:
-    rails generate job_model Thing
+    `rails generate osc_machete_rails:job_model ThingJob thing:references`
 
     This will create:
-        what/will/it/create
+        Model:          app/models/thing_job.rb
+        Test:           test/models/thing_job_test.rb
+        Fixtures:       test/fixtures/thing_jobs.yml
+        Migration:      db/migrate/XXX_create_thing_jobs.rb
