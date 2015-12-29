@@ -4,6 +4,17 @@ module OscMacheteRails
   module Statusable
     extend Gem::Deprecate
 
+    delegate :submitted?, :completed?, :failed?, :active?, to: :status
+
+    def status=(s)
+      super(s.nil? ? s : s.to_s)
+    end
+
+    # getter returns a Status value from CHAR or a Status value
+    def status
+      OSC::Machete::Status.new(super)
+    end
+
     # Initialize the object
     def self.included(obj)
       # TODO: throw warning if we detect that pbsid, status, save,
@@ -34,80 +45,6 @@ module OscMacheteRails
     def job
       script_path = respond_to?(:script_name) ? Pathname.new(job_path).join(script_name) : nil
       OSC::Machete::Job.new(pbsid: pbsid, script: script_path)
-    end
-
-    # Returns true if the job has been submitted.
-    #
-    # If the pbsid is nil or the pbsid is an empty string,
-    # then the job hasn't been submitted and method returns false.
-    #
-    # @return [Boolean] true if the job has been submitted.
-    def submitted?
-      ! (pbsid.nil? || pbsid == "")
-    end
-
-    # Returns true if the job is no longer running.
-    #
-    # If the job status is completed or failed
-    # return true.
-    #
-    # @return [Boolean] true if job is no longer running.
-    def completed?
-      status.to_s == "C" || status.to_s == "F"
-    end
-
-    # Returns true if the job has failed.
-    #
-    # @return [Boolean] true if the job has failed.
-    def failed?
-      status.to_s == "F"
-    end
-
-    # Returns true if in a running state (R,Q,H)
-    #
-    # DEPRECATED: Use 'active?' instead.
-    #
-    # @return [Boolean] true if in a running state.
-    def running?
-      active?
-    end
-    deprecate :running?, "Use active? instead", 2015, 03
-
-    # Returns true if in a running state (R,Q,H)
-    #
-    # @return [Boolean] true if in a running state.
-    def running_queued_or_hold?
-      active?
-    end
-    deprecate :running_queued_or_hold?, "Use active? instead", 2015, 03
-
-    # Returns true if the job has been submitted and is not completed.
-    #
-    # @return [Boolean] true if the job has been submitted and is not completed.
-    def active?
-      submitted? && ! completed?
-    end
-
-    # Returns a string representing a human readable status label.
-    #
-    # Status options:
-    #   Hold
-    #   Running
-    #   Queued
-    #   Failed
-    #   Completed
-    #   Not Submitted
-    #
-    # @return [String] A String representing a human readable status label.
-    def status_human_readable
-      statuses = {"H" => "Hold", "R" => "Running", "Q" => "Queued", "F" => "Failed", "C" => "Completed"}
-
-      if ! submitted?
-        "Not Submitted"
-      else
-        # FIXME: is this safe? perhaps a default?
-        statuses[status.to_s]
-      end
     end
 
     # Build the results validation method name from script_name attr
@@ -157,17 +94,18 @@ module OscMacheteRails
     #
     # @param [Boolean, nil] force Force the update. (Default: false)
     def update_status!(force: false)
-      if submitted? && (! completed? || force)
-        # if the status of the job is nil, the job is no longer in the batch
-        # system, so it is either completed or failed
+      # by default only update if its an active job
+      if  (status.not_submitted? && pbsid) || status.active? || force
+
+        # get the current status from the system
         current_status = job.status
-        if current_status.nil? || current_status.to_s == "C"
-          current_status = results_valid? ? "C" : "F"
+
+        # if job is done, lets re-validate
+        if current_status.completed? || current_status.failed?
+          current_status = results_valid? ? OSC::Machete::Status.completed : OSC::Machete::Status.failed
         end
 
-        if current_status.to_s != self.status.to_s || force
-          # FIXME: how do we integrate logging into Rails apps?
-          # puts "status changed. current_status: #{current_status} and status is #{status}"
+        if current_status != self.status || force
           self.status = current_status
           self.save
         end

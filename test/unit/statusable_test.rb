@@ -30,18 +30,18 @@ class StatusableTest < Minitest::Unit::TestCase
     assert @job.submitted?
     assert ! @job.completed?
     assert @job.active?
-    assert_equal "Queued", @job.status_human_readable
+    assert_equal "Queued", @job.status.inspect
 
     @job.status = :R
     assert @job.active?
-    assert_equal "Running", @job.status_human_readable
+    assert_equal "Running", @job.status.inspect
 
     @job.status = :C
-    assert @job.completed?, "completed? should return true when status is F or C"
+    assert @job.completed?, "completed? should return true when status is C"
     assert ! @job.failed?, "failed? should return false when status is not F"
 
     @job.status = :F
-    assert @job.completed?, "completed? should return true when status is F or C"
+    assert ! @job.completed?, "completed? should return false when status is F"
     assert @job.failed?, "failed? should return true when status is F"
   end
 
@@ -51,20 +51,21 @@ class StatusableTest < Minitest::Unit::TestCase
     assert @job.submitted?
     assert ! @job.completed?
     assert @job.active?
-    assert_equal "Queued", @job.status_human_readable
+    assert_equal "Queued", @job.status.inspect
 
     @job.status = "R"
     assert @job.active?
-    assert_equal "Running", @job.status_human_readable
+    assert_equal "Running", @job.status.inspect
 
     @job.status = "C"
-    assert @job.completed?, "completed? should return true when status is F or C"
+    assert @job.completed?, "completed? should return true when status is C"
     assert ! @job.failed?, "failed? should return false when status is not F"
 
     @job.status = "F"
-    assert @job.completed?, "completed? should return true when status is F or C"
+    assert ! @job.completed?, "completed? should return false when status is F"
     assert @job.failed?, "failed? should return true when status is F"
   end
+
 
   def test_results_valid_hook_called
     #FIXME: these tests should use a Job object with a custom Torque helper
@@ -73,9 +74,8 @@ class StatusableTest < Minitest::Unit::TestCase
     #that returns status for the right values and get rid of these OpenStructs
     #below.
 
-    # normally, qstat returns nil, and we call hook
-    @job.define_singleton_method(:job) { OpenStruct.new(:status => nil) }
-    assert_nil @job.job.status
+    # when a job is completed, make sure we validate the results
+    define_job_singleton_method @job, OSC::Machete::Status.completed
 
     @job.status = "R"
     @job.expects(:"results_valid?").at_least_once
@@ -83,23 +83,8 @@ class StatusableTest < Minitest::Unit::TestCase
 
 
     # sometimes, qstat returns "C": still call the hook!
-    @job.define_singleton_method(:job) { OpenStruct.new(:status => "C") }
-    assert_equal "C", @job.job.status
-
-    @job.status = "R"
-    @job.expects(:"results_valid?").at_least_once
-    @job.update_status!
-
-    # but if the status is completed we don't want the hook to run again
-    @job.expects(:"results_valid?").never
-    @job.status = "C"
-    @job.update_status!
-  end
-
-  def test_results_valid_hook_called_when_status_returns_symbol
-    # sometimes, qstat returns :C and the job returns "C" still call the hook!
-    @job.define_singleton_method(:job) { OpenStruct.new(:status => :C) }
-    assert_equal :C, @job.job.status
+    define_job_singleton_method @job, OSC::Machete::Status.completed
+    assert_equal OSC::Machete::Status.completed, @job.job.status
 
     @job.status = "R"
     @job.expects(:"results_valid?").at_least_once
@@ -113,17 +98,38 @@ class StatusableTest < Minitest::Unit::TestCase
 
   # if status is R but also saved record is also R we shouldn't save
   def test_save_after_update_when_status_returns_symbol
-    @job.define_singleton_method(:job) { OpenStruct.new(:status => :R) }
-    assert :R, @job.job.status
+    define_job_singleton_method @job, OSC::Machete::Status.running
+    assert OSC::Machete::Status.running, @job.job.status
 
     @job.expects(:"save").never
     @job.status = "R"
     @job.update_status!
 
     @job.expects(:"save").at_least_once
-    @job.define_singleton_method(:job) { OpenStruct.new(:status => :R) }
     @job.status = "Q"
     @job.update_status!
   end
 
+  def test_update_status_with_not_submitted_with_pbsid
+    define_job_singleton_method @job, OSC::Machete::Status.running
+    @job.expects(:"save").at_least_once
+    @job.status = nil
+    @job.update_status!
+  end
+
+  def test_update_status_with_not_submitted_without_pbsid
+    define_job_singleton_method @job, OSC::Machete::Status.running
+    @job.expects(:"save").never
+    @job.pbsid = nil
+    @job.status = nil
+    @job.update_status!
+  end
+
+  private
+
+  def define_job_singleton_method(obj, status)
+    @job.define_singleton_method(:job) {
+      OpenStruct.new(:status => status)
+    }
+  end
 end

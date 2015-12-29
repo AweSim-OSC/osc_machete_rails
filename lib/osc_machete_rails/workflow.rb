@@ -151,47 +151,22 @@ module OscMacheteRails
 
     # depends on jobs_active_record_relation being defined
     module StatusMethods
-      extend Gem::Deprecate
+      delegate :submitted?, :completed?, :failed?, :active?, to: :status
 
-      def submitted?
-        jobs_active_record_relation.count > 0
-      end
-
-      def completed?
-        # true if all jobs are completed
-        submitted? && jobs_active_record_relation.where(status: ["F", "C"]).count == jobs_active_record_relation.count
-      end
-
-      def failed?
-        # true if any of the jobs .failed?
-        jobs_active_record_relation.where(status: ["F"]).any?
-      end
-
-      # returns true if in a running state (R,Q,H) i.e. not completed and not submitted
-      def running_queued_or_hold?
-        active?
-      end
-      deprecate :running_queued_or_hold?, "Use active? instead", 2015, 03
-
-      def active?
-        submitted? && ! completed?
-      end
-
-      # FIXME: better name for this?
-      def status_human_readable
-        if failed?
-          "Failed"
-        elsif completed?
-          "Completed"
-        elsif jobs_active_record_relation.where(status: "R").any?
-          "Running"
-        elsif jobs_active_record_relation.where(status: "Q").any?
-          "Queued"
-        elsif jobs_active_record_relation.where(status: "H").any?
-          "Hold"
-        else
-          "Not Submitted"
-        end
+      # Reduce the jobs to a single OSC::Machete:Status value
+      #
+      # Assumes `jobs_active_record_relation` is a Statusable ActiveRecord
+      # model. Get array of status values (one for each job) and then add them
+      # together to get one value. OSC::Machete::Status#+ is overridden to 
+      # return the highest precendent status value when adding two together.
+      #
+      # FIXME: it might be clearer in code to use `max` instead of `+` i.e.
+      # statuses.reduce(&:max) and rename OSC::Machete::Status#+.
+      #
+      # @return [OSC::Machete::Status] a single value representing the status 
+      def status
+        statuses = jobs_active_record_relation.to_a.map(&:status)
+        statuses.empty? ? OSC::Machete::Status.not_submitted : statuses.reduce(&:+)
       end
     end
 
