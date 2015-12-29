@@ -21,10 +21,4 @@ class OscMacheteRails::ScaffoldControllerGenerator < Rails::Generators::Scaffold
   # the default template engine is erb, so we provide specific erb_generator.rb and its templates
   # see lib/generators/osc_machete_rails/erb for details
   hook_for :template_engine
-
-  # remove hook for jbuilder to omit jbuilder files
-  # TODO: if we want to support jbuilder, we need to remove this hook and fix the controller template
-  # to optionally return json, which currently only assumes HTML; we might want the controller to still
-  # handle json
-  remove_hook_for :jbuilder
 end
