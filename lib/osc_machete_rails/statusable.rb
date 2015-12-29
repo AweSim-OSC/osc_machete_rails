@@ -15,6 +15,9 @@ module OscMacheteRails
       OSC::Machete::Status.new(super)
     end
 
+    alias_method :cached_status, :status
+    alias_method :cached_status=, :status=
+
     # Initialize the object
     def self.included(obj)
       # TODO: throw warning if we detect that pbsid, status, save,
@@ -95,7 +98,7 @@ module OscMacheteRails
     # @param [Boolean, nil] force Force the update. (Default: false)
     def update_status!(force: false)
       # by default only update if its an active job
-      if  (status.not_submitted? && pbsid) || status.active? || force
+      if  (cached_status.not_submitted? && pbsid) || cached_status.active? || force
 
         # get the current status from the system
         current_status = job.status
@@ -105,8 +108,8 @@ module OscMacheteRails
           current_status = results_valid? ? OSC::Machete::Status.completed : OSC::Machete::Status.failed
         end
 
-        if current_status != self.status || force
-          self.status = current_status
+        if current_status != self.cached_status || force
+          self.cached_status = current_status
           self.save
         end
       end
