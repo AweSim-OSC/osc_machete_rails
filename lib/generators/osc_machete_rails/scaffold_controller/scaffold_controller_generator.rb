@@ -20,4 +20,7 @@ class OscMacheteRails::ScaffoldControllerGenerator < Rails::Generators::Scaffold
   hook_for :helper, as: :scaffold do |invoked|
     invoke invoked, [ controller_name ]
   end
+
+  # remove hook for jbuilder
+  remove_hook_for :jbuilder
 end

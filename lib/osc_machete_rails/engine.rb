@@ -6,7 +6,6 @@ module OscMacheteRails
       g.workflow_model      true
       g.job_model           true
       g.workflow_template   true
-      g.jbuilder            false
     end
   end
 end
