@@ -19,7 +19,7 @@ class ActiveRecord::WorkflowModelGenerator < ActiveRecord::Generators::ModelGene
     # strip the jobs argument out of the rest of the arguments so we don't confuse ModelGenerator
     jobs = args.grep(/:jobs$/)
     args = args - jobs
-    
+
     # assumes that if not specified, the job model is called "job"
     # FIXME: should we throw an error instead? i.e. make this a required argument?
     @job = Rails::Generators::GeneratedAttribute.parse(jobs.first || "job:jobs")
