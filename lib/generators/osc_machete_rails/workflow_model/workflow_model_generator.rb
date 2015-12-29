@@ -2,7 +2,7 @@ class OscMacheteRails::WorkflowModelGenerator < Rails::Generators::NamedBase
   source_root File.expand_path("../templates", __FILE__)
 
   def initialize(args, *options)
-    args << 'staged_dir:string'
+    args |= %w(staged_dir:string)
 
     super
   end
