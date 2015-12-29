@@ -1,7 +1,7 @@
 <% module_namespacing do -%>
 class <%= class_name %> < <%= parent_class_name.classify %>
   has_many :<%= job.plural_name %>, dependent: :destroy
-  has_machete_workflow of :<%= job.plural_name %>
+  has_machete_workflow_of :<%= job.plural_name %>
 
 <% attributes.select(&:reference?).each do |attribute| -%>
   belongs_to :<%= attribute.name %><%= ', polymorphic: true' if attribute.polymorphic? %>
