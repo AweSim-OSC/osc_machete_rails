@@ -28,8 +28,7 @@ class <%= class_name %> < <%= parent_class_name.classify %>
 
   # Make copy of workflow
   def copy
-    new_<%= singular_table_name %> = self.dup
-    new_<%= singular_table_name %>
+    self.dup
   end
 end
 <% end -%>
