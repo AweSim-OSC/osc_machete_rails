@@ -8,10 +8,11 @@ module OscMacheteRails
         label_class = 'label-success'
       elsif job.active?
         label_class = 'label-primary'
-      end
+      end if job
 
+      status = job ? job.status : OSC::Machete::Status.not_submitted
       content_tag :span, class: %I(label #{label_class}) do
-        job.status.inspect
+        status.inspect
       end
     end
   end
