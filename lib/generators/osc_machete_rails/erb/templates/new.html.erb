@@ -1,0 +1,5 @@
+<div class="page-header">
+    <h2>New <%= singular_table_name.titleize %></h2>
+</div>
+
+<%%= render 'form', <%= singular_table_name %>: @<%= singular_table_name %> %>

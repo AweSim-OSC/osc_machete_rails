@@ -1,0 +1,34 @@
+<div class="page-header">
+  <h2>Listing <%= plural_table_name.titleize %></h2>
+</div>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>#</th>
+<% attributes.reject(&:password_digest?).each do |attribute| -%>
+      <th><%= attribute.human_name %></th>
+<% end -%>
+      <th colspan="4"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <%% @<%= plural_table_name %>.each do |<%= singular_table_name %>| %>
+      <tr>
+        <td><%%= <%= singular_table_name %>.id %></td>
+<% attributes.reject(&:password_digest?).each do |attribute| -%>
+        <td><%%= <%= singular_table_name %>.<%= attribute.name %> %></td>
+<% end -%>
+        <td><%%= link_to 'Submit', submit_<%= singular_table_name %>_path(<%= singular_table_name %>), class: 'btn btn-success btn-sm' %></td>
+        <td><%%= link_to 'Show', <%= singular_table_name %>, class: 'btn btn-primary btn-sm' %></td>
+        <td><%%= link_to 'Edit', edit_<%= singular_table_name %>_path(<%= singular_table_name %>), class: 'btn btn-default btn-sm' %></td>
+        <td><%%= link_to 'Destroy', <%= singular_table_name %>, method: :delete, class: 'btn btn-danger btn-sm', data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <%% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%%= link_to 'New <%= singular_table_name.titleize %>', new_<%= singular_table_name %>_path %>
