@@ -3,6 +3,7 @@ require "osc_machete_rails/engine"
 require "osc_machete_rails/submittable"
 require "osc_machete_rails/statusable"
 require "osc_machete_rails/workflow"
+require "osc_machete_rails/helper"
 
 module OscMacheteRails
   # Include the Submittable and Statusable modules by default when you include
