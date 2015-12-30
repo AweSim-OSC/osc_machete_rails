@@ -1,0 +1,3 @@
+Description:
+    Create rails files for resource_route generator. Adds two Workflow specific
+    routes.

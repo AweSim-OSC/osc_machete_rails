@@ -7,11 +7,12 @@ require "osc_machete_rails/version"
 Gem::Specification.new do |s|
   s.name        = "osc_machete_rails"
   s.version     = OscMacheteRails::VERSION
-  s.authors     = ["TODO: Your name"]
-  s.email       = ["TODO: Your email"]
-  s.homepage    = "TODO"
-  s.summary     = "TODO: Summary of OscMacheteRails."
-  s.description = "TODO: Description of OscMacheteRails."
+  s.authors     = ["Eric Franz"]
+  s.email       = ["efranz@osc.edu"]
+  s.homepage    = "http://www.awesim.org"
+  s.summary     = "AweSim"
+  s.description = "Rails backend for appkit."
+  s.license     = "MIT"
 
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]
   s.test_files = Dir["test/**/*"]

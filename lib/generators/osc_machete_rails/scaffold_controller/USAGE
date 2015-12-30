@@ -1,0 +1,17 @@
+Description:
+    Stubs out a scaffolded controller, its seven RESTful actions + two Workflow
+    actions and related views. Pass the model name, either CamelCased or
+    under_scored. The controller name is retrieved as a pluralized version of
+    the model name.
+
+    This generates a controller class in app/controllers and invokes helper,
+    template engine and test framework generators.
+
+Example:
+    `rails generate osc_machete_rails:scaffold_controller Thing`
+
+    Thing controller with URLs like /thing/submit.
+        Controller: app/controllers/things_controller.rb
+        Test:       test/controllers/things_controller_test.rb
+        Views:      app/views/things/index.html.erb [...]
+        Helper:     app/helpers/things_helper.rb
