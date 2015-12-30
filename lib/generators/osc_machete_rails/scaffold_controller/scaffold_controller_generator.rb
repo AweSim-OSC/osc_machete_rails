@@ -1,15 +1,15 @@
 require 'rails/generators/rails/scaffold_controller/scaffold_controller_generator'
+require 'generators/osc_machete_rails/job_helpers'
 
 class OscMacheteRails::ScaffoldControllerGenerator < Rails::Generators::ScaffoldControllerGenerator
+  include OscMacheteRails::JobHelpers
   source_root File.expand_path('../templates', __FILE__)
 
   # attribute to know what the job model is - see comments on active_record/workflow_model_generator.rb
   attr_reader :job
 
   def initialize(args, *options)
-    jobs = args.grep(/:jobs$/)
-    args = args - jobs
-    @job = Rails::Generators::GeneratedAttribute.parse(jobs.first || "#{args.first.underscore}_job:jobs")
+    @job = parse_job!(args)
 
     super
   end
