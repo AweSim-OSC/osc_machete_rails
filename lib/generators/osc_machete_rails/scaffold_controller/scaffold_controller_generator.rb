@@ -9,7 +9,7 @@ class OscMacheteRails::ScaffoldControllerGenerator < Rails::Generators::Scaffold
   def initialize(args, *options)
     jobs = args.grep(/:jobs$/)
     args = args - jobs
-    @job = Rails::Generators::GeneratedAttribute.parse(jobs.first || "job:jobs")
+    @job = Rails::Generators::GeneratedAttribute.parse(jobs.first || "#{args.first.underscore}_job:jobs")
 
     super
   end
