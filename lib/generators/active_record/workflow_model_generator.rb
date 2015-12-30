@@ -1,8 +1,8 @@
 require 'rails/generators/active_record/model/model_generator'
-require 'generators/osc_machete_rails/orm_helpers'
+require 'generators/active_record/orm_helpers'
 
 class ActiveRecord::WorkflowModelGenerator < ActiveRecord::Generators::ModelGenerator
-  include OscMacheteRails::OrmHelpers
+  include ActiveRecord::OrmHelpers
   source_root File.expand_path('../templates', __FILE__)
 
   # add a new attribute to the generator
