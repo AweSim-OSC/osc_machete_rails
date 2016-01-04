@@ -9,7 +9,7 @@ class <%= controller_class_name %>Controller < ApplicationController
   # GET <%= route_url %>
   # GET <%= route_url %>.json
   def index
-    @<%= plural_table_name %> = <%= orm_class.all("#{class_name}.preload(:#{job.plural_name})") %>
+    @<%= plural_table_name %> = <%= "#{class_name}.preload(:#{job.plural_name})" %>
   end
 
   # GET <%= route_url %>/1
