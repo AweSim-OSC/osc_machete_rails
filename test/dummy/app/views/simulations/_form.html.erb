@@ -1,0 +1,15 @@
+<%# Uses rails_bootstrap_form gem. API at: https://github.com/bootstrap-ruby/rails-bootstrap-forms %>
+<%= bootstrap_form_for(simulation) do |f| %>
+  <%= f.alert_message "Please fix the errors below." %>
+
+  <%= f.text_field :name %>
+  <%= f.text_field :pressure %>
+
+  <%= f.submit 'Save', class: 'btn btn-primary' %>
+  <%= f.button 'Reset', type: :reset, class: 'btn btn-default' %>
+
+  <hr>
+
+  <%= link_to 'Back', simulations_path, class: 'btn btn-default' %>
+  <%= link_to 'Show', simulation, class: 'btn btn-primary' unless simulation.new_record? %>
+<% end %>

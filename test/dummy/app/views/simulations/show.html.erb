@@ -1,0 +1,16 @@
+<div class="page-header">
+    <h2>Showing Simulation</h2>
+</div>
+
+<p>
+  <strong>Name:</strong>
+  <%= @simulation.name %>
+</p>
+
+<p>
+  <strong>Pressure:</strong>
+  <%= @simulation.pressure %>
+</p>
+
+<%= link_to 'Back', simulations_path, class: 'btn btn-default' %>
+<%= link_to 'Edit', edit_simulation_path(@simulation), class: 'btn btn-default' %>
