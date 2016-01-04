@@ -6,6 +6,9 @@ module OscMacheteRails
 
     delegate :submitted?, :completed?, :failed?, :active?, to: :status
 
+    # Delegate the delete method to the OSC::Machete:Job object
+    delegate :delete, to: :job
+
     def status=(s)
       super(s.nil? ? s : s.to_s)
     end
@@ -27,6 +30,14 @@ module OscMacheteRails
       if obj.respond_to?(:after_find)
         obj.after_find do |simple_job|
           simple_job.update_status!
+        end
+      end
+
+      # before we destroy ActiveRecord
+      # we delete the batch job and the working directory
+      if obj.respond_to?(:before_destroy)
+        obj.before_destroy do |simple_job|
+          simple_job.delete rmdir: true
         end
       end
     end
