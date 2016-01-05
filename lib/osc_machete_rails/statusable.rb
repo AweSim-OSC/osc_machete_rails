@@ -6,9 +6,6 @@ module OscMacheteRails
 
     delegate :submitted?, :completed?, :failed?, :active?, to: :status
 
-    # Delegate the delete method to the OSC::Machete:Job object
-    delegate :delete, to: :job
-
     def status=(s)
       super(s.nil? ? s : s.to_s)
     end
@@ -16,6 +13,12 @@ module OscMacheteRails
     # getter returns a Status value from CHAR or a Status value
     def status
       OSC::Machete::Status.new(super)
+    end
+
+    # delete the batch job if active and update status
+    def stop(rmdir: false, update: true)
+      update(status: OSC::Machete::Status.failed) if status.active? && update
+      job.delete rmdir: rmdir
     end
 
     # Initialize the object
@@ -37,7 +40,7 @@ module OscMacheteRails
       # we delete the batch job and the working directory
       if obj.respond_to?(:before_destroy)
         obj.before_destroy do |simple_job|
-          simple_job.delete rmdir: true
+          simple_job.stop rmdir: true, update: false
         end
       end
     end
