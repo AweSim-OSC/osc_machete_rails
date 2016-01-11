@@ -3,9 +3,7 @@ class OscMacheteRails::JobModelGenerator < Rails::Generators::NamedBase
 
   def initialize(args, *options)
     args |= %w(status:string)
-    args |= %w(pbsid:string)
-    args |= %w(job_path:string)
-    args |= %w(script_name:string)
+    args |= %w(job_cache:text)
 
     super
   end

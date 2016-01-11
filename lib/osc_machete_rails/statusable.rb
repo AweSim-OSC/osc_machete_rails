@@ -22,6 +22,23 @@ module OscMacheteRails
       # Rails.logger.warn if Module.constants.include?(:Rails) && (! obj.respond_to?(:pbsid))
       # etc.
 
+      # Store job object info in a JSON column and replace old column methods
+      if obj.column_names.include? 'job_cache'
+        obj.store :job_cache, accessors: [ :script, :pbsid, :host ], coder: JSON
+        delegate :script_name, to: :job
+        define_method :job_path do
+          job.path
+        end
+      else
+        define_method(:job_cache) do
+          {
+            script: Pathname.new(job_path).join(script_name),
+            pbsid: pbsid,
+            host: nil
+          }
+        end
+      end
+
       # in Rails ActiveRecord objects after loaded from the database,
       # update the status
       if obj.respond_to?(:after_find)
@@ -35,16 +52,21 @@ module OscMacheteRails
     #
     # @param [Job] new_job The Job object to be assigned to the Statusable instance.
     def job=(new_job)
-      self.pbsid = new_job.pbsid
-      self.job_path = new_job.path.to_s
-      self.script_name = new_job.script_name if respond_to?(:script_name=)
+      if self.has_attribute?(:job_cache)
+        job_cache[:script] = new_job.script_path.to_s
+        job_cache[:pbsid] = new_job.pbsid
+        job_cache[:host] = new_job.host if new_job.respond_to?(:host)
+      else
+        self.script_name = new_job.script_name
+        self.job_path = new_job.path.to_s
+        self.pbsid = new_job.pbsid
+      end
       self.status = new_job.status
     end
 
     # Returns associated OSC::Machete::Job instance
     def job
-      script_path = respond_to?(:script_name) ? Pathname.new(job_path).join(script_name) : nil
-      OSC::Machete::Job.new(pbsid: pbsid, script: script_path)
+      OSC::Machete::Job.new(job_cache.symbolize_keys)
     end
 
     # Build the results validation method name from script_name attr
