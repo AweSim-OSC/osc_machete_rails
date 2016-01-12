@@ -18,7 +18,7 @@ module OscMacheteRails
     # track the classes that include this module
     def self.included(base)
       @classes ||= []
-      @classes << base.name
+      @classes << Kernel.const_get(base.name) unless base.name.nil?
 
       base.send(:extend, ClassMethods)
     end
@@ -36,6 +36,10 @@ module OscMacheteRails
         #    and if we are thinking about doing this on each request...
         #    would be more efficient to know the resource being requested
         #    and update models just for that...
+
+        # given the class name as a string
+        # how do we turn it into a constant and call method on it
+        # like cls = "Simulation" and cls.count
         cls.active.to_a.each(&:update_status!) if cls.respond_to?(:active)
       end
     end
@@ -66,7 +70,7 @@ module OscMacheteRails
 
     # Returns associated OSC::Machete::Job instance
     def job
-      script_path = respond_to?(:script_name) ? Pathname.new(job_path).join(script_name) : nil
+      script_path = respond_to?(:script_name) && script_name ? Pathname.new(job_path).join(script_name) : nil
       OSC::Machete::Job.new(pbsid: pbsid, script: script_path)
     end
 
@@ -90,7 +94,7 @@ module OscMacheteRails
     def results_valid?
       valid = true
 
-      if self.respond_to? :script_name
+      if self.respond_to? :script_name && !script_name.nil?
         if self.respond_to?(results_validation_method_name)
           valid = self.send(results_validation_method_name)
         end

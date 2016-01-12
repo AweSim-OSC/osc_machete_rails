@@ -1,6 +1,9 @@
 class SimulationsController < ApplicationController
   before_action :set_simulation, only: [:show, :edit, :update, :destroy, :submit, :copy]
 
+  # FIXME: remove this after adding this to the ApplicationController
+  before_action -> { OSC::Machete::SimpleJob::Statusable.update_status_of_all_active_jobs  }
+
   # GET /simulations
   # GET /simulations.json
   def index
