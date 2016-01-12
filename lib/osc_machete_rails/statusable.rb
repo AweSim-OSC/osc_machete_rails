@@ -15,6 +15,12 @@ module OscMacheteRails
       OSC::Machete::Status.new(super)
     end
 
+    # delete the batch job and update status
+    def stop(rmdir: false, update: true)
+      update(status: OSC::Machete::Status.failed) if status.active? && update
+      job.delete rmdir: rmdir
+    end
+
     # Initialize the object
     def self.included(obj)
       # TODO: throw warning if we detect that pbsid, status, save,
@@ -44,6 +50,14 @@ module OscMacheteRails
       if obj.respond_to?(:after_find)
         obj.after_find do |simple_job|
           simple_job.update_status!
+        end
+      end
+
+      # before we destroy ActiveRecord
+      # we delete the batch job and the working directory
+      if obj.respond_to?(:before_destroy)
+        obj.before_destroy do |simple_job|
+          simple_job.stop rmdir: true, update: false
         end
       end
     end

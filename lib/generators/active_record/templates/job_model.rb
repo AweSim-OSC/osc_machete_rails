@@ -9,8 +9,6 @@ class <%= class_name %> < <%= parent_class_name.classify %>
   has_secure_password
 <% end -%>
 
-  before_destroy { |j| j.job.delete(rmdir: true) if j.job }
-
   # Determine if the results are valid
   # def results_valid?
   #   # CODE GOES HERE
