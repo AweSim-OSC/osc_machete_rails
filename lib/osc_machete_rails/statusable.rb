@@ -27,20 +27,10 @@ module OscMacheteRails
       @classes
     end
 
+    # for each Statusable, call update_status! on active jobs
     def self.update_status_of_all_active_jobs
-      self.classes.each do |cls|
-        #FIXME: problems with approach
-        #  - doesn't capture jobs that have pbsid and no cached status unless
-        #    active includes that
-        #  - requires at least 1 (if not 2) db queries for each Job model
-        #    and if we are thinking about doing this on each request...
-        #    would be more efficient to know the resource being requested
-        #    and update models just for that...
-
-        # given the class name as a string
-        # how do we turn it into a constant and call method on it
-        # like cls = "Simulation" and cls.count
-        cls.active.to_a.each(&:update_status!) if cls.respond_to?(:active)
+      self.classes.each do |klass|
+        klass.active.to_a.each(&:update_status!) if klass.respond_to?(:active)
       end
     end
 
