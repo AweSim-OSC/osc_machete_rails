@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class NavigationTest < ActionDispatch::IntegrationTest
+class StatusableUpdateStatusTest < ActionDispatch::IntegrationTest
   fixtures :all
 
   def test_m
