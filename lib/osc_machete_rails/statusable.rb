@@ -16,9 +16,9 @@ module OscMacheteRails
     end
 
     # delete the batch job and update status
-    def stop(rmdir: false, update: true)
+    def stop(update: true)
       update(status: OSC::Machete::Status.failed) if status.active? && update
-      job.delete rmdir: rmdir
+      job.delete
     end
 
     # Initialize the object
@@ -57,7 +57,7 @@ module OscMacheteRails
       # we delete the batch job and the working directory
       if obj.respond_to?(:before_destroy)
         obj.before_destroy do |simple_job|
-          simple_job.stop rmdir: true, update: false
+          simple_job.stop update: false
         end
       end
     end

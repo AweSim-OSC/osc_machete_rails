@@ -29,6 +29,16 @@ module OscMacheteRails
 
     # depends on jobs_active_record_relation being defined
     module BuilderMethods
+      # Methods run when this module is included
+      def self.included(obj)
+        # before we destroy ActiveRecord
+        # we delete the staged_dir if exists
+        if obj.respond_to?(:before_destroy)
+          obj.before_destroy do |w|
+            FileUtils.rm_rf(w.staged_dir) if w.respond_to?(:staged_dir) && w.staged_dir
+          end
+        end
+      end
 
       # Returns the name of the class with underscores.
       #
