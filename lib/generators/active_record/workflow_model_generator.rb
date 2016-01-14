@@ -1,8 +1,10 @@
 require 'rails/generators/active_record/model/model_generator'
-require 'generators/osc_machete_rails/orm_helpers'
+require 'generators/active_record/orm_helpers'
+require 'generators/osc_machete_rails/job_helpers'
 
 class ActiveRecord::WorkflowModelGenerator < ActiveRecord::Generators::ModelGenerator
-  include OscMacheteRails::OrmHelpers
+  include ActiveRecord::OrmHelpers
+  include OscMacheteRails::JobHelpers
   source_root File.expand_path('../templates', __FILE__)
 
   # add a new attribute to the generator
@@ -16,14 +18,7 @@ class ActiveRecord::WorkflowModelGenerator < ActiveRecord::Generators::ModelGene
   #     rails g osc_machete_rails:workflow_model Container name:string container_job:jobs
   #
   def initialize(args, *options)
-    # strip the jobs argument out of the rest of the arguments so we don't confuse ModelGenerator
-    jobs = args.grep(/:jobs$/)
-    args = args - jobs
-
-    # assumes that if not specified, the job model is called "job"
-    # FIXME: should we throw an error instead? i.e. make this a required argument?
-    @job = Rails::Generators::GeneratedAttribute.parse(jobs.first || "job:jobs")
-
+    @job = parse_job!(args)
     super
   end
 

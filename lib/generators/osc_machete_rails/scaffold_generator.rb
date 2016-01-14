@@ -14,14 +14,12 @@ class OscMacheteRails::ScaffoldGenerator < Rails::Generators::ScaffoldGenerator
   remove_hook_for :orm
 
   # hook for workflow model/migration
-  hook_for :workflow_model, type: :boolean do |model|
-    invoke model, orig_args + add_jobs
-  end
+  hook_for :workflow_model, type: :boolean
 
   # hook for job model/migration
   hook_for :job_model, type: :boolean do |model|
     new_args = orig_args.dup
-    new_args[0] = jobs_table_name
+    new_args[0] = "#{singular_table_name}_job"
     new_args << "#{singular_table_name}:references"
     invoke model, new_args
   end
@@ -33,19 +31,8 @@ class OscMacheteRails::ScaffoldGenerator < Rails::Generators::ScaffoldGenerator
   hook_for :workflow_template, type: :boolean
 
   # override ScaffoldGenerator
-  hook_for :scaffold_controller, required: true do |controller|
-    invoke controller, orig_args + add_jobs
-  end
+  hook_for :scaffold_controller, required: true
 
   # remove scaffold_stylesheet
   remove_hook_for :stylesheet_engine
-
-  private
-    def add_jobs
-      ["#{jobs_table_name}:jobs"]
-    end
-
-    def jobs_table_name
-      "#{singular_table_name}_job"
-    end
 end

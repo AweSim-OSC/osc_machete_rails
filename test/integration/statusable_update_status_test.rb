@@ -3,9 +3,21 @@ require 'test_helper'
 class StatusableUpdateStatusTest < ActionDispatch::IntegrationTest
   fixtures :all
 
+  def setup
+    # FIXME: better to create simulations from doing a request to post a new sim
+    @sims = []
+    @sims << SimulationJob.create(status: OSC::Machete::Status.completed, pbsid: "123")
+    @sims << SimulationJob.create(status: OSC::Machete::Status.not_submitted, pbsid: "124")
+    @sims << SimulationJob.create(status: OSC::Machete::Status.queued, pbsid: "125")
+    @sims << SimulationJob.create(status: OSC::Machete::Status.running, pbsid: "126")
+  end
+
+  def teardown
+    @sims.each(&:destroy)
+  end
+
   def test_m
-    SimulationJob.create status: OSC::Machete::Status.completed, pbsid: "123.osc.edu"
-    assert_equal 1, SimulationJob.count
+    assert_equal 4, SimulationJob.count, "Test database is not cleaned up after each test is run"
   end
 
   def test_update_models_on_index_request
@@ -15,11 +27,6 @@ class StatusableUpdateStatusTest < ActionDispatch::IntegrationTest
     OSC::Machete::TorqueHelper.any_instance.stubs(:qstat).with("125").returns(OSC::Machete::Status.running)
 
     # FIXME: move to a controller test?
-    # FIXME: better to create simulations from doing a request to post a new sim
-    SimulationJob.create status: OSC::Machete::Status.completed, pbsid: "123"
-    SimulationJob.create status: OSC::Machete::Status.not_submitted, pbsid: "124"
-    SimulationJob.create status: OSC::Machete::Status.queued, pbsid: "125"
-    SimulationJob.create status: OSC::Machete::Status.running, pbsid: "126"
     assert_equal 4, SimulationJob.count
 
     # 2. when doing a get request, the active jobs should be updated

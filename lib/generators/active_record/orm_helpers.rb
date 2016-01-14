@@ -1,4 +1,4 @@
-module OscMacheteRails::OrmHelpers
+module ActiveRecord::OrmHelpers
   private
     def migration_template(source, destination, config = {})
       super 'migration.rb', destination, config
