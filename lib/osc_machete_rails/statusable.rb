@@ -2,7 +2,7 @@ module OscMacheteRails
   # Methods that deal with pbs batch job status management
   # within a Rails ActiveRecord model
   module Statusable
-    extend Gem::Deprecate
+
 
     delegate :submitted?, :completed?, :failed?, :active?, to: :status
 
@@ -21,15 +21,17 @@ module OscMacheteRails
       job.delete rmdir: rmdir
     end
 
-    # Initialize the object
+
     def self.included(obj)
-      # TODO: throw warning if we detect that pbsid, status, save,
-      # etc. are not apart of this; i.e.
-      # Rails.logger.warn if Module.constants.include?(:Rails) && (! obj.respond_to?(:pbsid))
-      # etc.
+      # track the classes that include this module
+      @classes ||= []
+      @classes << Kernel.const_get(obj.name) unless obj.name.nil?
+
+      # add class methods
+      obj.send(:extend, ClassMethods)
 
       # Store job object info in a JSON column and replace old column methods
-      if obj.column_names.include? 'job_cache'
+      if obj.respond_to?(:column_names) && obj.column_names.include?('job_cache')
         obj.store :job_cache, accessors: [ :script, :pbsid, :host ], coder: JSON
         delegate :script_name, to: :job
         define_method :job_path do
@@ -38,18 +40,10 @@ module OscMacheteRails
       else
         define_method(:job_cache) do
           {
-            script: Pathname.new(job_path).join(script_name),
+            script: (job_path && script_name) ? Pathname.new(job_path).join(script_name) : nil,
             pbsid: pbsid,
             host: nil
           }
-        end
-      end
-
-      # in Rails ActiveRecord objects after loaded from the database,
-      # update the status
-      if obj.respond_to?(:after_find)
-        obj.after_find do |simple_job|
-          simple_job.update_status!
         end
       end
 
@@ -59,6 +53,31 @@ module OscMacheteRails
         obj.before_destroy do |simple_job|
           simple_job.stop rmdir: true, update: false
         end
+      end
+    end
+
+    def self.classes
+      @classes
+    end
+
+    # for each Statusable, call update_status! on active jobs
+    def self.update_status_of_all_active_jobs
+      self.classes.each do |klass|
+        klass.active.to_a.each(&:update_status!) if klass.respond_to?(:active)
+      end
+    end
+
+    # class methods to extend a model with
+    module ClassMethods
+      # scope to get all of the jobs that are in an active state
+      # or have a pbsid
+      def active
+        # FIXME: what about OR i.e. where 
+        #
+        #     status in active_values OR (pbsid != null and status == null)
+        #
+        # will need to use STRING for the sql instead of this.
+        where(status: OSC::Machete::Status.active_values.map(&:to_s))
       end
     end
 
@@ -103,7 +122,7 @@ module OscMacheteRails
     def results_valid?
       valid = true
 
-      if self.respond_to? :script_name
+      if self.respond_to? :script_name && !script_name.nil?
         if self.respond_to?(results_validation_method_name)
           valid = self.send(results_validation_method_name)
         end

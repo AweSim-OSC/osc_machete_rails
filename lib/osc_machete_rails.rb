@@ -6,6 +6,8 @@ require "osc_machete_rails/workflow"
 require "osc_machete_rails/helper"
 
 module OscMacheteRails
+  mattr_accessor :update_status_of_all_active_jobs_on_each_request
+
   # Include the Submittable and Statusable modules by default when you include
   # this module
   #
