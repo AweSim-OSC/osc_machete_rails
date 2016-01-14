@@ -34,9 +34,7 @@ module OscMacheteRails
         # before we destroy ActiveRecord
         # we delete the staged_dir if exists
         if obj.respond_to?(:before_destroy)
-          obj.before_destroy do |w|
-            FileUtils.rm_rf(w.staged_dir) if w.respond_to?(:staged_dir) && w.staged_dir
-          end
+          obj.before_destroy :delete_staging
         end
       end
 
@@ -91,6 +89,11 @@ module OscMacheteRails
         FileUtils.cp_r staging_template_dir.to_s + "/.", staged_dir
 
         staged_dir
+      end
+
+      # Deletes the staged directory if it exists
+      def delete_staging
+        FileUtils.rm_rf(staged_dir) if respond_to?(:staged_dir) && staged_dir
       end
 
       # Creates a new location and renders the mustache files
