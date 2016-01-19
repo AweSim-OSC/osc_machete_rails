@@ -1,4 +1,7 @@
 class SimulationJob < ActiveRecord::Base
+  # Here we test the deprecated include method instead of the new
+  # OscMacheteRails::Statusable
+  # We will want both to work...
   include OSC::Machete::SimpleJob::Statusable
 
   belongs_to :simulation

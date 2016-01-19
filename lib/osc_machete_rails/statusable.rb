@@ -24,8 +24,7 @@ module OscMacheteRails
 
     def self.included(obj)
       # track the classes that include this module
-      @classes ||= []
-      @classes << Kernel.const_get(obj.name) unless obj.name.nil?
+      self.classes << Kernel.const_get(obj.name) unless obj.name.nil?
 
       # add class methods
       obj.send(:extend, ClassMethods)
@@ -57,11 +56,13 @@ module OscMacheteRails
     end
 
     def self.classes
-      @classes || []
+      @classes ||= []
     end
 
     # for each Statusable, call update_status! on active jobs
     def self.update_status_of_all_active_jobs
+      Rails.logger.warn "Statusable.classes Array is empty. This should contain a list of all the classes that include Statusable." if self.classes.empty?
+
       self.classes.each do |klass|
         klass.active.to_a.each(&:update_status!) if klass.respond_to?(:active)
       end
