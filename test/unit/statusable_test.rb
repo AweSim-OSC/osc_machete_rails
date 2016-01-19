@@ -41,7 +41,8 @@ class StatusableTest < Minitest::Unit::TestCase
     assert ! @job.failed?, "failed? should return false when status is not F"
 
     @job.status = :F
-    assert ! @job.completed?, "completed? should return false when status is F"
+    assert @job.completed?, "completed? should return true when status is F"
+    assert ! @job.passed?, "passed? should return false when status is F"
     assert @job.failed?, "failed? should return true when status is F"
   end
 
@@ -62,7 +63,8 @@ class StatusableTest < Minitest::Unit::TestCase
     assert ! @job.failed?, "failed? should return false when status is not F"
 
     @job.status = "F"
-    assert ! @job.completed?, "completed? should return false when status is F"
+    assert @job.completed?, "completed? should return true when status is F"
+    assert ! @job.passed?, "passed? should return false when status is F"
     assert @job.failed?, "failed? should return true when status is F"
   end
 
@@ -75,7 +77,7 @@ class StatusableTest < Minitest::Unit::TestCase
     #below.
 
     # when a job is completed, make sure we validate the results
-    define_job_singleton_method @job, OSC::Machete::Status.completed
+    define_job_singleton_method @job, OSC::Machete::Status.passed
 
     @job.status = "R"
     @job.expects(:"results_valid?").at_least_once
@@ -83,8 +85,8 @@ class StatusableTest < Minitest::Unit::TestCase
 
 
     # sometimes, qstat returns "C": still call the hook!
-    define_job_singleton_method @job, OSC::Machete::Status.completed
-    assert_equal OSC::Machete::Status.completed, @job.job.status
+    define_job_singleton_method @job, OSC::Machete::Status.passed
+    assert_equal OSC::Machete::Status.passed, @job.job.status
 
     @job.status = "R"
     @job.expects(:"results_valid?").at_least_once

@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     osc_machete_rails (0.0.1)
-      osc-machete (~> 1.0.0.pre3)
+      osc-machete (~> 1.0.0.pre5)
       rails (~> 4.0.0)
 
 GEM
@@ -35,6 +35,7 @@ GEM
     arel (4.0.0)
     builder (3.1.4)
     erubis (2.7.0)
+    ffi (1.9.6)
     hike (1.2.3)
     i18n (0.7.0)
     mail (2.5.4)
@@ -42,17 +43,16 @@ GEM
       treetop (~> 1.4.8)
     metaclass (0.0.1)
     mime-types (1.25)
-    mini_portile (0.6.1)
     minitest (4.7.5)
     mocha (1.1.0)
       metaclass (~> 0.0.1)
     multi_json (1.8.2)
     mustache (0.99.5)
-    nokogiri (1.6.6.2)
-      mini_portile (~> 0.6.0)
-    osc-machete (1.0.0.pre3)
+    osc-machete (1.0.0.pre5)
       mustache
-      nokogiri
+      pbs
+    pbs (0.4.3)
+      ffi (~> 1.9, >= 1.9.6)
     polyglot (0.3.3)
     rack (1.5.2)
     rack-test (0.6.2)
