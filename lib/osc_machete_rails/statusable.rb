@@ -57,7 +57,7 @@ module OscMacheteRails
     end
 
     def self.classes
-      @classes
+      @classes || []
     end
 
     # for each Statusable, call update_status! on active jobs
