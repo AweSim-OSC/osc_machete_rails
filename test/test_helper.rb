@@ -4,6 +4,9 @@ ENV["RAILS_ENV"] = "test"
 require File.expand_path("../dummy/config/environment.rb",  __FILE__)
 require "rails/test_help"
 
+# dependencies that dummy app depends on
+require "bootstrap_form"
+
 Rails.backtrace_cleaner.remove_silencers!
 
 # Load support files

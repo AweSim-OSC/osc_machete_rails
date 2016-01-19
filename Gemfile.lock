@@ -33,6 +33,7 @@ GEM
       thread_safe (~> 0.1)
       tzinfo (~> 0.3.37)
     arel (4.0.0)
+    bootstrap_form (2.3.0)
     builder (3.1.4)
     erubis (2.7.0)
     ffi (1.9.6)
@@ -93,6 +94,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  bootstrap_form (~> 2.3.0)
   minitest
   mocha
   osc_machete_rails!

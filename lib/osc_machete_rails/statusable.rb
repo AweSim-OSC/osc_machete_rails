@@ -2,7 +2,7 @@ module OscMacheteRails
   # Methods that deal with pbs batch job status management
   # within a Rails ActiveRecord model
   module Statusable
-    extend Gem::Deprecate
+
 
     delegate :submitted?, :completed?, :passed?, :failed?, :active?, to: :status
 
@@ -15,19 +15,69 @@ module OscMacheteRails
       OSC::Machete::Status.new(super)
     end
 
-    # Initialize the object
-    def self.included(obj)
-      # TODO: throw warning if we detect that pbsid, status, save,
-      # etc. are not apart of this; i.e.
-      # Rails.logger.warn if Module.constants.include?(:Rails) && (! obj.respond_to?(:pbsid))
-      # etc.
+    # delete the batch job and update status
+    def stop(update: true)
+      update(status: OSC::Machete::Status.failed) if status.active? && update
+      job.delete
+    end
 
-      # in Rails ActiveRecord objects after loaded from the database,
-      # update the status
-      if obj.respond_to?(:after_find)
-        obj.after_find do |simple_job|
-          simple_job.update_status!
+
+    def self.included(obj)
+      # track the classes that include this module
+      @classes ||= []
+      @classes << Kernel.const_get(obj.name) unless obj.name.nil?
+
+      # add class methods
+      obj.send(:extend, ClassMethods)
+
+      # Store job object info in a JSON column and replace old column methods
+      if obj.respond_to?(:column_names) && obj.column_names.include?('job_cache')
+        obj.store :job_cache, accessors: [ :script, :pbsid, :host ], coder: JSON
+        delegate :script_name, to: :job
+        define_method :job_path do
+          job.path
         end
+      else
+        define_method(:job_cache) do
+          {
+            script: (job_path && script_name) ? Pathname.new(job_path).join(script_name) : nil,
+            pbsid: pbsid,
+            host: nil
+          }
+        end
+      end
+
+      # before we destroy ActiveRecord
+      # we delete the batch job and the working directory
+      if obj.respond_to?(:before_destroy)
+        obj.before_destroy do |simple_job|
+          simple_job.stop update: false
+        end
+      end
+    end
+
+    def self.classes
+      @classes
+    end
+
+    # for each Statusable, call update_status! on active jobs
+    def self.update_status_of_all_active_jobs
+      self.classes.each do |klass|
+        klass.active.to_a.each(&:update_status!) if klass.respond_to?(:active)
+      end
+    end
+
+    # class methods to extend a model with
+    module ClassMethods
+      # scope to get all of the jobs that are in an active state
+      # or have a pbsid
+      def active
+        # FIXME: what about OR i.e. where 
+        #
+        #     status in active_values OR (pbsid != null and status == null)
+        #
+        # will need to use STRING for the sql instead of this.
+        where(status: OSC::Machete::Status.active_values.map(&:to_s))
       end
     end
 
@@ -35,16 +85,21 @@ module OscMacheteRails
     #
     # @param [Job] new_job The Job object to be assigned to the Statusable instance.
     def job=(new_job)
-      self.pbsid = new_job.pbsid
-      self.job_path = new_job.path.to_s
-      self.script_name = new_job.script_name if respond_to?(:script_name=)
+      if self.has_attribute?(:job_cache)
+        job_cache[:script] = new_job.script_path.to_s
+        job_cache[:pbsid] = new_job.pbsid
+        job_cache[:host] = new_job.host if new_job.respond_to?(:host)
+      else
+        self.script_name = new_job.script_name
+        self.job_path = new_job.path.to_s
+        self.pbsid = new_job.pbsid
+      end
       self.status = new_job.status
     end
 
     # Returns associated OSC::Machete::Job instance
     def job
-      script_path = respond_to?(:script_name) ? Pathname.new(job_path).join(script_name) : nil
-      OSC::Machete::Job.new(pbsid: pbsid, script: script_path)
+      OSC::Machete::Job.new(job_cache.symbolize_keys)
     end
 
     # Build the results validation method name from script_name attr
@@ -67,7 +122,7 @@ module OscMacheteRails
     def results_valid?
       valid = true
 
-      if self.respond_to? :script_name
+      if self.respond_to? :script_name && !script_name.nil?
         if self.respond_to?(results_validation_method_name)
           valid = self.send(results_validation_method_name)
         end

@@ -18,10 +18,7 @@ class OscMacheteRails::ScaffoldGenerator < Rails::Generators::ScaffoldGenerator
 
   # hook for job model/migration
   hook_for :job_model, type: :boolean do |model|
-    new_args = orig_args.dup
-    new_args[0] = "#{singular_table_name}_job"
-    new_args << "#{singular_table_name}:references"
-    invoke model, new_args
+    invoke model, %W[#{singular_table_name}_job #{singular_table_name}:references]
   end
 
   # override hook for adding config/routes
