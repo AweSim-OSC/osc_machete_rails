@@ -69,69 +69,52 @@ class StatusableTest < Minitest::Unit::TestCase
   end
 
 
-  # def test_results_valid_hook_called
-  #   #FIXME: these tests should use a Job object with a custom Torque helper
-  #   #that is our mock. Solution: add TorqueHelper.default and use that in Job
-  #   #then we can mock default with our own modified TorqueHelper instance
-  #   #that returns status for the right values and get rid of these OpenStructs
-  #   #below.
-
-  #   # when a job is completed, make sure we validate the results
-  #   define_job_singleton_method @job, OSC::Machete::Status.passed
-
-  #   @job.status = "R"
-  #   @job.expects(:"results_valid?").at_least_once
-  #   @job.update_status!
+  def test_results_valid_hook_called
+    OSC::Machete::Job.any_instance.stubs(:status).returns(OSC::Machete::Status.passed)
+    @job.status = "R"
+    @job.expects(:"results_valid?").at_least_once
+    @job.update_status!
 
 
-  #   # sometimes, qstat returns "C": still call the hook!
-  #   define_job_singleton_method @job, OSC::Machete::Status.passed
-  #   assert_equal OSC::Machete::Status.passed, @job.job.status
+    # sometimes, qstat returns "C": still call the hook!
+    assert_equal OSC::Machete::Status.passed, @job.job.status
 
-  #   @job.status = "R"
-  #   @job.expects(:"results_valid?").at_least_once
-  #   @job.update_status!
+    @job.status = "R"
+    @job.expects(:"results_valid?").at_least_once
+    @job.update_status!
 
-  #   # but if the status is completed we don't want the hook to run again
-  #   @job.expects(:"results_valid?").never
-  #   @job.status = "C"
-  #   @job.update_status!
-  # end
+    # but if the status is completed we don't want the hook to run again
+    @job.expects(:"results_valid?").never
+    @job.status = "C"
+    @job.update_status!
+  end
 
-  # # if status is R but also saved record is also R we shouldn't save
-  # def test_save_after_update_when_status_returns_symbol
-  #   define_job_singleton_method @job, OSC::Machete::Status.running
-  #   assert OSC::Machete::Status.running, @job.job.status
+  # if status is R but also saved record is also R we shouldn't save
+  def test_save_after_update_when_status_returns_symbol
+    OSC::Machete::Job.any_instance.stubs(:status).returns(OSC::Machete::Status.running)
+    assert OSC::Machete::Status.running, @job.job.status
 
-  #   @job.expects(:"save").never
-  #   @job.status = "R"
-  #   @job.update_status!
+    @job.expects(:"save").never
+    @job.status = "R"
+    @job.update_status!
 
-  #   @job.expects(:"save").at_least_once
-  #   @job.status = "Q"
-  #   @job.update_status!
-  # end
+    @job.expects(:"save").at_least_once
+    @job.status = "Q"
+    @job.update_status!
+  end
 
-  # def test_update_status_with_not_submitted_with_pbsid
-  #   define_job_singleton_method @job, OSC::Machete::Status.running
-  #   @job.expects(:"save").at_least_once
-  #   @job.status = nil
-  #   @job.update_status!
-  # end
+  def test_update_status_with_not_submitted_with_pbsid
+    OSC::Machete::Job.any_instance.stubs(:status).returns(OSC::Machete::Status.running)
+    @job.expects(:"save").at_least_once
+    @job.status = nil
+    @job.update_status!
+  end
 
-  # def test_update_status_with_not_submitted_without_pbsid
-  #   define_job_singleton_method @job, OSC::Machete::Status.running
-  #   @job.expects(:"save").never
-  #   @job.pbsid = nil
-  #   @job.status = nil
-  #   @job.update_status!
-  # end
-
-  # private
-
-  # def define_job_singleton_method(obj, status)
-  #   @job.define_singleton_method(:job) {
-  #     OpenStruct.new(:status => status)
-  #   }
-  # end
+  def test_update_status_with_not_submitted_without_pbsid
+    OSC::Machete::Job.any_instance.stubs(:status).returns(OSC::Machete::Status.running)
+    @job.expects(:"save").never
+    @job.pbsid = nil
+    @job.status = nil
+    @job.update_status!
+  end
 end
