@@ -34,10 +34,10 @@ class StatusableUpdateStatusTest < ActionDispatch::IntegrationTest
     assert_response :success
 
     # 3. we verify the modifications to the active jobs took place
-    assert_equal OSC::Machete::Status.completed, SimulationJob.where(pbsid: "123").first.status
+    assert_equal OSC::Machete::Status.passed, SimulationJob.where(pbsid: "123").first.status
     assert_equal OSC::Machete::Status.not_submitted, SimulationJob.where(pbsid: "124").first.status
     assert_equal OSC::Machete::Status.running, SimulationJob.where(pbsid: "125").first.status
-    assert_equal OSC::Machete::Status.completed, SimulationJob.where(pbsid: "126").first.status
+    assert_equal OSC::Machete::Status.passed, SimulationJob.where(pbsid: "126").first.status
   end
 end
 
