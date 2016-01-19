@@ -94,8 +94,11 @@ module OscMacheteRails
     #
     # @param [Boolean, nil] force Force the update. (Default: false)
     def update_status!(force: false)
+      # this will make it easier to differentiate from current_status
+      cached_status = status
+
       # by default only update if its an active job
-      if  (status.not_submitted? && pbsid) || status.active? || force
+      if  (cached_status.not_submitted? && pbsid) || cached_status.active? || force
 
         # get the current status from the system
         current_status = job.status
@@ -105,7 +108,7 @@ module OscMacheteRails
           current_status = results_valid? ? OSC::Machete::Status.passed : OSC::Machete::Status.failed
         end
 
-        if current_status != self.status || force
+        if (current_status != cached_status) || force
           self.status = current_status
           self.save
         end
