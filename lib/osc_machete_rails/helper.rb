@@ -1,6 +1,6 @@
 module OscMacheteRails
   module Helper
-    def job_status_label(job)
+    def status_label(job)
       job ||= OpenStruct.new status: OSC::Machete::Status.not_submitted
       text = job.status.inspect
 
@@ -18,6 +18,7 @@ module OscMacheteRails
         text
       end
     end
+    alias_method :job_status_label, :status_label
   end
 end
 
