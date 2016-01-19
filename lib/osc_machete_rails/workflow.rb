@@ -151,7 +151,7 @@ module OscMacheteRails
 
     # depends on jobs_active_record_relation being defined
     module StatusMethods
-      delegate :submitted?, :completed?, :failed?, :active?, to: :status
+      delegate :submitted?, :completed?, :passed?, :failed?, :active?, to: :status
 
       # Reduce the jobs to a single OSC::Machete:Status value
       #

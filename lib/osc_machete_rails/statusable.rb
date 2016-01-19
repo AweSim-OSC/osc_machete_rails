@@ -4,7 +4,7 @@ module OscMacheteRails
   module Statusable
     extend Gem::Deprecate
 
-    delegate :submitted?, :completed?, :failed?, :active?, to: :status
+    delegate :submitted?, :completed?, :passed?, :failed?, :active?, to: :status
 
     def status=(s)
       super(s.nil? ? s : s.to_s)
@@ -101,8 +101,8 @@ module OscMacheteRails
         current_status = job.status
 
         # if job is done, lets re-validate
-        if current_status.completed? || current_status.failed?
-          current_status = results_valid? ? OSC::Machete::Status.completed : OSC::Machete::Status.failed
+        if current_status.completed?
+          current_status = results_valid? ? OSC::Machete::Status.passed : OSC::Machete::Status.failed
         end
 
         if current_status != self.status || force
