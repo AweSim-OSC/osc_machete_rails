@@ -4,7 +4,7 @@ module OscMacheteRails
   module Statusable
 
 
-    delegate :submitted?, :completed?, :failed?, :active?, to: :status
+    delegate :submitted?, :completed?, :passed?, :failed?, :active?, to: :status
 
     def status=(s)
       super(s.nil? ? s : s.to_s)
@@ -24,8 +24,7 @@ module OscMacheteRails
 
     def self.included(obj)
       # track the classes that include this module
-      @classes ||= []
-      @classes << Kernel.const_get(obj.name) unless obj.name.nil?
+      self.classes << Kernel.const_get(obj.name) unless obj.name.nil?
 
       # add class methods
       obj.send(:extend, ClassMethods)
@@ -57,11 +56,13 @@ module OscMacheteRails
     end
 
     def self.classes
-      @classes
+      @classes ||= []
     end
 
     # for each Statusable, call update_status! on active jobs
     def self.update_status_of_all_active_jobs
+      Rails.logger.warn "Statusable.classes Array is empty. This should contain a list of all the classes that include Statusable." if self.classes.empty?
+
       self.classes.each do |klass|
         klass.active.to_a.each(&:update_status!) if klass.respond_to?(:active)
       end
@@ -149,18 +150,21 @@ module OscMacheteRails
     #
     # @param [Boolean, nil] force Force the update. (Default: false)
     def update_status!(force: false)
+      # this will make it easier to differentiate from current_status
+      cached_status = status
+
       # by default only update if its an active job
-      if  (status.not_submitted? && pbsid) || status.active? || force
+      if  (cached_status.not_submitted? && pbsid) || cached_status.active? || force
 
         # get the current status from the system
         current_status = job.status
 
         # if job is done, lets re-validate
-        if current_status.completed? || current_status.failed?
-          current_status = results_valid? ? OSC::Machete::Status.completed : OSC::Machete::Status.failed
+        if current_status.completed?
+          current_status = results_valid? ? OSC::Machete::Status.passed : OSC::Machete::Status.failed
         end
 
-        if current_status != self.status || force
+        if (current_status != cached_status) || force
           self.status = current_status
           self.save
         end
