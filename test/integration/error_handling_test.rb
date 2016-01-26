@@ -84,6 +84,34 @@ class ErrorHandlingTest < ActionDispatch::IntegrationTest
   end
 
 
+  def test_update_status_handles_qstat_error
+    @s1 = SimulationJob.create status: OSC::Machete::Status.queued, pbsid: "1"
+    @s2 = SimulationJob.create status: OSC::Machete::Status.queued, pbsid: "2"
+    @s3 = SimulationJob.create status: OSC::Machete::Status.queued, pbsid: "3"
+
+    # new
+    OSC::Machete::TorqueHelper.any_instance.stubs(:qstat).with("1", any_parameters).returns(OSC::Machete::Status.running)
+    OSC::Machete::TorqueHelper.any_instance.stubs(:qstat).with("2", any_parameters).raises(PBS::Error, "The system is down!")
+    OSC::Machete::TorqueHelper.any_instance.stubs(:qstat).with("3", any_parameters).returns(OSC::Machete::Status.passed)
+
+    get "/simulations"
+
+    # @s2 is queued and qstat will throw an error so it should just stay queued
+    # the others should be updated
+    assert_equal OSC::Machete::Status.running, SimulationJob.find(@s1.id).status
+    assert_equal OSC::Machete::Status.queued, SimulationJob.find(@s2.id).status
+    assert_equal OSC::Machete::Status.passed, SimulationJob.find(@s3.id).status
+
+    @s1.delete
+    @s2.delete
+    @s3.delete
+
+    # original
+    OSC::Machete::TorqueHelper.any_instance.unstub(:qstat)
+    OSC::Machete::TorqueHelper.any_instance.stubs(:qstat).raises(PBS::Error, "The system is down!")
+  end
+
+
 
   # def test_qstat_fails_following_submit_success
   #   OSC::Machete::TorqueHelper.any_instance.stubs(:qsub).returns("123456.oakley.osc.edu")

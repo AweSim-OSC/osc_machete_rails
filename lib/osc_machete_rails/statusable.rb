@@ -165,7 +165,6 @@ module OscMacheteRails
 
       # by default only update if its an active job
       if  (cached_status.not_submitted? && pbsid) || cached_status.active? || force
-
         # get the current status from the system
         current_status = job.status
 
@@ -179,6 +178,11 @@ module OscMacheteRails
           self.save
         end
       end
+
+    rescue PBS::Error => e
+      # we log the error but we just don't update the status
+      Rails.logger.error("During update_status! call on job with pbsid #{pbsid} and id #{id}" \
+                          " a PBS::Error was thrown: #{e.message}")
     end
   end
 end
