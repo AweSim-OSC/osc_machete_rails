@@ -146,16 +146,35 @@ module OscMacheteRails
         jobs.each(&:submit)
         true
       rescue OSC::Machete::Job::ScriptMissingError => e
+        stop_machete_jobs(jobs)
+
         msg = "A OSC::Machete::Job::ScriptMissingError occurred when submitting jobs for simulation #{id}: #{e.message}"
         errors[:base] << msg
         Rails.logger.error(msg)
         false
       rescue PBS::Error => e
+        stop_machete_jobs(jobs)
+
         msg = "A PBS::Error occurred when submitting jobs for simulation #{id}: #{e.message}"
         errors[:base] << msg
         Rails.logger.error(msg)
 
         false
+      end
+
+      # given an array of OSC::Machete::Job objects, qdel them all and handle
+      # any errors. not to be confused with #stop which stops all actual jobs of
+      # the workflow
+      def stop_machete_jobs(jobs)
+        jobs.each do |job|
+          begin
+            job.delete
+          rescue PBS::Error
+            msg = "A PBS::Error occurred when deleting a job from the batch system with pbsid: #{job.pbsid} and message: #{e.message}"
+            errors[:base] << msg
+            Rails.logger.error(msg)
+          end
+        end
       end
 
       # Saves a Hash of jobs to a staged directory
