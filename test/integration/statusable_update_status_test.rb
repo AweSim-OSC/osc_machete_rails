@@ -25,12 +25,9 @@ class StatusableUpdateStatusTest < ActionDispatch::IntegrationTest
 
     # if a test below suddenly returns "Passed" instead of running it might be
     # because the signature of qstat or the arguments Job#status is passing to
-    # these by default are different. If host: oakley is the default, then these
-    # tests will break again. Better to have a different solution, such as a
-    # custom TorqueHelper that implements qstat to accept pbsid and any number
-    # of args so it can ignore the other keyword args...
-    OSC::Machete::TorqueHelper.any_instance.stubs(:qstat).with("125", host: nil).returns(OSC::Machete::Status.running)
-    OSC::Machete::TorqueHelper.any_instance.stubs(:qstat).with("127", host: nil).returns(OSC::Machete::Status.queued)
+    # these by default are different. 
+    OSC::Machete::TorqueHelper.any_instance.stubs(:qstat).with("125", any_parameters).returns(OSC::Machete::Status.running)
+    OSC::Machete::TorqueHelper.any_instance.stubs(:qstat).with("127", any_parameters).returns(OSC::Machete::Status.queued)
 
     # FIXME: move to a controller test?
     assert_equal @sims.length, SimulationJob.count, "Test database is not cleaned up after each test is run"
