@@ -140,9 +140,21 @@ class ErrorHandlingTest < ActionDispatch::IntegrationTest
     assert assigns(:simulation).errors.to_a.any?
     assert assigns(:simulation).errors.to_a.first =~ /PBS::Error/, "Should have thrown PBS::Error"
 
+    OSC::Machete::TorqueHelper.any_instance.stubs(:qdel).returns(nil)
+
+    # delete simulation now that "the system is fixed"
+    delete "/simulations/#{@sim.id}"
+
+    # delete threw error, so nothing should have happened
+    assert ! SimulationJob.where(id: @job.id).any?
+    assert ! Simulation.where(id: @sim.id).any?
+
+    assert_response :found
+
     # after submission succeeds, qstat-ing fails, we must handle it gracefully
     OSC::Machete::TorqueHelper.any_instance.stubs(:qsub).raises(PBS::Error, "The system is down!")
     OSC::Machete::TorqueHelper.any_instance.stubs(:qstat).raises(PBS::Error, "The system is down!")
+    OSC::Machete::TorqueHelper.any_instance.stubs(:qdel).raises(PBS::Error, "The system is down!")
   end
 
 
