@@ -17,6 +17,8 @@ module OscMacheteRails
 
     # delete the batch job and update status
     def stop(update: true)
+      return unless status.active?
+
       job.delete
       update(status: OSC::Machete::Status.failed) if status.active? && update
     end
@@ -42,6 +44,17 @@ module OscMacheteRails
             pbsid: pbsid,
             host: nil
           }
+        end
+      end
+
+      # before we destroy ActiveRecord qdel any jobs running
+      # Workflow normally takes care of this, but this is harmless
+      # because stop won't do anything unless the job is active
+      # this way if you delete a job from the rails console it will delete the
+      # corresponding batch job
+      if obj.respond_to?(:before_destroy)
+        obj.before_destroy do |simple_job|
+          simple_job.stop update: false
         end
       end
     end
