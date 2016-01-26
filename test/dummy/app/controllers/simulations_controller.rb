@@ -65,13 +65,17 @@ class SimulationsController < ApplicationController
   # PUT /simulations/1/submit.json
   def submit
     respond_to do |format|
+
       if @simulation.submitted?
         format.html { redirect_to simulations_url, alert: 'Simulation has already been submitted.' }
         format.json { head :no_content }
-      else
-        @simulation.submit
+      elsif @simulation.submit
         format.html { redirect_to simulations_url, notice: 'Simulation was successfully submitted.' }
         format.json { head :no_content }
+      else
+        # are you coming from edit, show, or the list view?
+        format.html { render :show, status: 500, alert: 'A problem occurred when trying to submit the simulation.' }
+        format.json { render json: @simulation.errors, status: 500 }
       end
     end
   end
