@@ -95,7 +95,17 @@ module OscMacheteRails
         self.job_path = new_job.path.to_s
         self.pbsid = new_job.pbsid
       end
-      self.status = new_job.status
+
+      begin
+        self.status = new_job.status
+      rescue PBS::Error => e
+        # a safe default
+        self.status = OSC::Machete::Status.queued
+
+        # log the error
+        Rails.logger.error("After submitting the job with pbsid: #{pbsid}," \
+                           " checking the status raised a PBS::Error: #{e.message}")
+      end
     end
 
     # Returns associated OSC::Machete::Job instance

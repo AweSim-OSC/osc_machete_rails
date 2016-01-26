@@ -39,7 +39,7 @@ class ErrorHandlingTest < ActionDispatch::IntegrationTest
     assert simulations_dir_empty?, "Sanity check failed"
     assert @empty_template.directory?, "Sanity check failed"
 
-    # now we should be able to try to submit a simulation
+    # now we should be able to try to submit the simulation, that needs main.sh but doesn't have it
     put "/simulations/#{@sim.id}/submit"
 
     assert_response 500
@@ -67,6 +67,24 @@ class ErrorHandlingTest < ActionDispatch::IntegrationTest
     assert assigns(:simulation).errors.to_a.first =~ /PBS::Error/, "Should have thrown PBS::Error"
     assert simulations_dir_empty?, 'If submitting a simulation fails, the staged directory should be deleted.'
   end
+
+  def test_handle_qstat_error_on_submit
+    OSC::Machete::TorqueHelper.any_instance.stubs(:qsub).returns("123456.oakley.osc.edu")
+
+    put "/simulations/#{@sim.id}/submit"
+
+    assert_response :found
+
+    # submission succeeded, but qdel failed!
+    assert Simulation.find(@sim.id).status.queued?
+    assert Simulation.find(@sim.id).simulation_jobs.count == 1
+
+    # after submission succeeds, qstat-ing fails, we must handle it gracefully
+    OSC::Machete::TorqueHelper.any_instance.stubs(:qsub).raises(PBS::Error, "The system is down!")
+  end
+
+
+
   # def test_qstat_fails_following_submit_success
   #   OSC::Machete::TorqueHelper.any_instance.stubs(:qsub).returns("123456.oakley.osc.edu")
   # end
