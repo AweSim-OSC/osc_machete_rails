@@ -106,7 +106,7 @@ module OscMacheteRails
 
         true
       rescue PBS::Error => e
-        msg = "A PBS::Error occurred when trying to delete jobs for simulation #{id}: #{e.message}"
+        msg = "A PBS::Error occurred when trying to stop jobs for simulation #{id}: #{e.message}"
         errors[:base] << msg
         Rails.logger.error(msg)
 
