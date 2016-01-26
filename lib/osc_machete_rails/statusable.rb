@@ -17,10 +17,19 @@ module OscMacheteRails
 
     # delete the batch job and update status
     def stop(update: true)
-      update(status: OSC::Machete::Status.failed) if status.active? && update
       job.delete
-    end
+      update(status: OSC::Machete::Status.failed) if status.active? && update
+    rescue PBS::Error => e
+      msg = "A PBS::Error occurred when trying to delete jobs for simulation #{id}: #{e.message}"
 
+      # FIXME: not sure about several things
+      # 1. how does the simulation object get access to thse errors (can it?)
+      # 2. how do we tell that destroy failed?
+      errors[:base] << msg
+      Rails.logger.error(msg)
+
+      false
+    end
 
     def self.included(obj)
       # track the classes that include this module

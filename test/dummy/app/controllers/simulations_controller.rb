@@ -54,10 +54,14 @@ class SimulationsController < ApplicationController
   # DELETE /simulations/1
   # DELETE /simulations/1.json
   def destroy
-    @simulation.destroy
     respond_to do |format|
-      format.html { redirect_to simulations_url, notice: 'Simulation was successfully destroyed.' }
-      format.json { head :no_content }
+      if @simulation.destroy
+        format.html { redirect_to simulations_url, notice: 'Simulation was successfully destroyed.' }
+        format.json { head :no_content }
+      else
+        format.html { render :show, status: 500, alert: 'A problem occurred when trying to destroy the simulation.' }
+        format.json { render json: @simulation.errors, status: 500 }
+      end
     end
   end
 
@@ -73,7 +77,6 @@ class SimulationsController < ApplicationController
         format.html { redirect_to simulations_url, notice: 'Simulation was successfully submitted.' }
         format.json { head :no_content }
       else
-        # are you coming from edit, show, or the list view?
         format.html { render :show, status: 500, alert: 'A problem occurred when trying to submit the simulation.' }
         format.json { render json: @simulation.errors, status: 500 }
       end

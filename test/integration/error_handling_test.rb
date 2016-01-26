@@ -112,6 +112,41 @@ class ErrorHandlingTest < ActionDispatch::IntegrationTest
   end
 
 
+  def test_delete_running_simulation_fails
+    OSC::Machete::TorqueHelper.any_instance.stubs(:qsub).returns("123456.oakley.osc.edu")
+    OSC::Machete::TorqueHelper.any_instance.stubs(:qstat).returns(OSC::Machete::Status.running)
+
+    put "/simulations/#{@sim.id}/submit"
+
+    assert_response :found
+
+    # verify we its running now
+    assert Simulation.find(@sim.id).status.running?
+    assert Simulation.find(@sim.id).simulation_jobs.count == 1
+
+    @job = @sim.simulation_jobs.first
+
+    # delete a running simulation
+    delete "/simulations/#{@sim.id}"
+
+    # delete threw error, so nothing should have happened
+    # FIXME: the job was stopped from being deleted, but not the simulation
+    assert SimulationJob.find(@job.id).status.running?
+    assert Simulation.find(@sim.id).status.running?
+    assert Simulation.find(@sim.id).simulation_jobs.count == 1
+
+    assert_response 500
+
+    # verify an error message was attached to the simulation object
+    assert assigns(:simulation).errors.to_a.any?
+    assert assigns(:simulation).errors.to_a.first =~ /PBS::Error/, "Should have thrown PBS::Error"
+
+    # after submission succeeds, qstat-ing fails, we must handle it gracefully
+    OSC::Machete::TorqueHelper.any_instance.stubs(:qsub).raises(PBS::Error, "The system is down!")
+    OSC::Machete::TorqueHelper.any_instance.stubs(:qstat).raises(PBS::Error, "The system is down!")
+  end
+
+
 
   # def test_qstat_fails_following_submit_success
   #   OSC::Machete::TorqueHelper.any_instance.stubs(:qsub).returns("123456.oakley.osc.edu")
