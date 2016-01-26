@@ -16,6 +16,7 @@ module OscMacheteRails
     end
 
     # delete the batch job and update status
+    # may raise PBS::Error as it is unhandled here!
     def stop(update: true)
       return unless status.active?
 
