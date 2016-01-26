@@ -35,7 +35,9 @@ module OscMacheteRails
         # prepend: true tells this to run before any of the jobs are destroyed
         # so we can stop them first and recover if there is a problem
         if obj.respond_to?(:before_destroy)
-          obj.before_destroy :stop_and_delete_staging, prepend: true
+          obj.before_destroy prepend: true do |sim|
+            sim.stop ? sim.delete_staging : false
+          end
         end
       end
 
@@ -109,11 +111,6 @@ module OscMacheteRails
         Rails.logger.error(msg)
 
         false
-      end
-
-      # stops all jobs, then deletes staging if all jobs stopped successfully
-      def stop_and_delete_staging
-        stop ? delete_staging : false
       end
 
       # Creates a new location and renders the mustache files
