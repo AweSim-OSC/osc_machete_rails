@@ -127,6 +127,18 @@ module OscMacheteRails
       # @param [Hash] jobs A Hash of Job objects to be submitted.
       def submit_jobs(jobs)
         jobs.each(&:submit)
+        true
+      rescue OSC::Machete::Job::ScriptMissingError => e
+        msg = "A OSC::Machete::Job::ScriptMissingError occurred when submitting jobs for simulation #{id}: #{e.message}"
+        errors[:base] << msg
+        Rails.logger.error(msg)
+        false
+      rescue PBS::Error => e
+        msg = "A PBS::Error occurred when submitting jobs for simulation #{id}: #{e.message}"
+        errors[:base] << msg
+        Rails.logger.error(msg)
+
+        false
       end
 
       # Saves a Hash of jobs to a staged directory
@@ -157,8 +169,12 @@ module OscMacheteRails
         render_mustache_files(staged_dir, template_view)
         after_stage(staged_dir)
         jobs = build_jobs(staged_dir)
-        submit_jobs(jobs)
-        save_jobs(jobs, staged_dir)
+        if submit_jobs(jobs)
+          save_jobs(jobs, staged_dir)
+        else
+          FileUtils.rm_rf staged_dir.to_s
+          false
+        end
       end
     end
 
