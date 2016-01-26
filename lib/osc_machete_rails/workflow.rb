@@ -31,10 +31,11 @@ module OscMacheteRails
     module BuilderMethods
       # Methods run when this module is included
       def self.included(obj)
-        # before we destroy ActiveRecord
-        # we delete the staged_dir if exists
+        # before we destroy ActiveRecord we stop all jobs and delete staging dir
+        # prepend: true tells this to run before any of the jobs are destroyed
+        # so we can stop them first and recover if there is a problem
         if obj.respond_to?(:before_destroy)
-          obj.before_destroy :delete_staging
+          obj.before_destroy :stop_and_delete_staging, prepend: true
         end
       end
 
@@ -94,6 +95,25 @@ module OscMacheteRails
       # Deletes the staged directory if it exists
       def delete_staging
         FileUtils.rm_rf(staged_dir) if respond_to?(:staged_dir) && staged_dir
+      end
+
+      # Stops all jobs, updating each active job to status "failed"
+      # returns true if all jobs were stopped, false otherwise
+      def stop
+        jobs_active_record_relation.to_a.each(&:stop)
+
+        true
+      rescue PBS::Error => e
+        msg = "A PBS::Error occurred when trying to delete jobs for simulation #{id}: #{e.message}"
+        errors[:base] << msg
+        Rails.logger.error(msg)
+
+        false
+      end
+
+      # stops all jobs, then deletes staging if all jobs stopped successfully
+      def stop_and_delete_staging
+        stop ? delete_staging : false
       end
 
       # Creates a new location and renders the mustache files

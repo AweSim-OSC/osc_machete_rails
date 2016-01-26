@@ -130,7 +130,6 @@ class ErrorHandlingTest < ActionDispatch::IntegrationTest
     delete "/simulations/#{@sim.id}"
 
     # delete threw error, so nothing should have happened
-    # FIXME: the job was stopped from being deleted, but not the simulation
     assert SimulationJob.find(@job.id).status.running?
     assert Simulation.find(@sim.id).status.running?
     assert Simulation.find(@sim.id).simulation_jobs.count == 1
