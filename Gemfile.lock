@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     osc_machete_rails (0.0.1)
-      osc-machete (~> 1.0.0.pre5)
+      osc-machete (~> 1.0.0.pre6)
       rails (~> 4.0.0)
 
 GEM
@@ -49,7 +49,7 @@ GEM
       metaclass (~> 0.0.1)
     multi_json (1.8.2)
     mustache (0.99.5)
-    osc-machete (1.0.0.pre5)
+    osc-machete (1.0.0.pre6)
       mustache
       pbs
     pbs (0.4.3)
