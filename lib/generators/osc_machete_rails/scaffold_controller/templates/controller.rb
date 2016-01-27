@@ -59,10 +59,17 @@ class <%= controller_class_name %>Controller < ApplicationController
   # DELETE <%= route_url %>/1
   # DELETE <%= route_url %>/1.json
   def destroy
-    @<%= orm_instance.destroy %>
     respond_to do |format|
-      format.html { redirect_to <%= index_helper %>_url, notice: <%= "'#{human_name} was successfully destroyed.'" %> }
-      format.json { head :no_content }
+      if @<%= orm_instance.destroy %>
+        format.html { redirect_to <%= index_helper %>_url, notice: <%= "'#{human_name} was successfully destroyed.'" %> }
+        format.json { head :no_content }
+      else
+        format.html {
+          redirect_to previous_or_index_url, alert: <%= "'A problem occurred when trying to destroy the #{human_name}. '" %> \
+            "#{@<%= orm_instance.errors %>.to_a.join(". ")}"
+        }
+        format.json { render json: @<%= orm_instance.errors %>, status: 500 }
+      end
     end
   end
 
@@ -73,10 +80,15 @@ class <%= controller_class_name %>Controller < ApplicationController
       if @<%= singular_table_name %>.submitted?
         format.html { redirect_to <%= index_helper %>_url, alert: <%= "'#{human_name} has already been submitted.'" %> }
         format.json { head :no_content }
-      else
-        @<%= singular_table_name %>.submit
+      elsif @<%= singular_table_name %>.submit
         format.html { redirect_to <%= index_helper %>_url, notice: <%= "'#{human_name} was successfully submitted.'" %> }
         format.json { head :no_content }
+      else
+        format.html {
+          redirect_to previous_or_index_url, alert: <%= "'A problem occurred when trying to submit the #{human_name}. '" %> \
+            "#{@<%= orm_instance.errors %>.to_a.join(". ")}"
+        }
+        format.json { render json: @<%= orm_instance.errors %>, status: 500 }
       end
     end
   end
@@ -89,6 +101,10 @@ class <%= controller_class_name %>Controller < ApplicationController
   end
 
   private
+    def previous_or_index_url
+      request.referer || <%= index_helper %>_url
+    end
+
     # Use callbacks to share common setup or constraints between actions.
     def set_<%= singular_table_name %>
       @<%= singular_table_name %> = <%= orm_class.find("#{class_name}.preload(:#{job.plural_name})", "params[:id]") %>
