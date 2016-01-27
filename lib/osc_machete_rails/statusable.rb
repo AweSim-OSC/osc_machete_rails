@@ -16,11 +16,13 @@ module OscMacheteRails
     end
 
     # delete the batch job and update status
+    # may raise PBS::Error as it is unhandled here!
     def stop(update: true)
-      update(status: OSC::Machete::Status.failed) if status.active? && update
-      job.delete
-    end
+      return unless status.active?
 
+      job.delete
+      update(status: OSC::Machete::Status.failed) if update
+    end
 
     def self.included(obj)
       # track the classes that include this module
@@ -43,14 +45,6 @@ module OscMacheteRails
             pbsid: pbsid,
             host: nil
           }
-        end
-      end
-
-      # before we destroy ActiveRecord
-      # we delete the batch job and the working directory
-      if obj.respond_to?(:before_destroy)
-        obj.before_destroy do |simple_job|
-          simple_job.stop update: false
         end
       end
     end
@@ -95,7 +89,17 @@ module OscMacheteRails
         self.job_path = new_job.path.to_s
         self.pbsid = new_job.pbsid
       end
-      self.status = new_job.status
+
+      begin
+        self.status = new_job.status
+      rescue PBS::Error => e
+        # a safe default
+        self.status = OSC::Machete::Status.queued
+
+        # log the error
+        Rails.logger.error("After submitting the job with pbsid: #{pbsid}," \
+                           " checking the status raised a PBS::Error: #{e.message}")
+      end
     end
 
     # Returns associated OSC::Machete::Job instance
@@ -155,7 +159,6 @@ module OscMacheteRails
 
       # by default only update if its an active job
       if  (cached_status.not_submitted? && pbsid) || cached_status.active? || force
-
         # get the current status from the system
         current_status = job.status
 
@@ -169,6 +172,11 @@ module OscMacheteRails
           self.save
         end
       end
+
+    rescue PBS::Error => e
+      # we log the error but we just don't update the status
+      Rails.logger.error("During update_status! call on job with pbsid #{pbsid} and id #{id}" \
+                          " a PBS::Error was thrown: #{e.message}")
     end
   end
 end

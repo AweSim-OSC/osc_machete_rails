@@ -13,8 +13,8 @@ class StatusableTest < Minitest::Unit::TestCase
   end
 
   def teardown
-    @job.destroy
-    @job_without_script_name.destroy
+    @job.delete
+    @job_without_script_name.delete
   end
 
   # verify both of these calls work without crashing

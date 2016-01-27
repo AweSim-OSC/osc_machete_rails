@@ -14,15 +14,20 @@ class StatusableUpdateStatusTest < ActionDispatch::IntegrationTest
   end
 
   def teardown
-    @sims.each(&:destroy)
+    # delete will avoid calling the destroy callbacks like "stop" i.e. qdel
+    @sims.each(&:delete)
   end
 
   def test_update_models_on_index_request
     # 1. setup database and torque helper with jobs so that two jobs that are
     # cached as queued and running are actually running and passed
     OSC::Machete::TorqueHelper.any_instance.stubs(:qstat).returns(OSC::Machete::Status.passed)
-    OSC::Machete::TorqueHelper.any_instance.stubs(:qstat).with("125").returns(OSC::Machete::Status.running)
-    OSC::Machete::TorqueHelper.any_instance.stubs(:qstat).with("127").returns(OSC::Machete::Status.queued)
+
+    # if a test below suddenly returns "Passed" instead of running it might be
+    # because the signature of qstat or the arguments Job#status is passing to
+    # these by default are different. 
+    OSC::Machete::TorqueHelper.any_instance.stubs(:qstat).with("125", any_parameters).returns(OSC::Machete::Status.running)
+    OSC::Machete::TorqueHelper.any_instance.stubs(:qstat).with("127", any_parameters).returns(OSC::Machete::Status.queued)
 
     # FIXME: move to a controller test?
     assert_equal @sims.length, SimulationJob.count, "Test database is not cleaned up after each test is run"
