@@ -25,6 +25,10 @@ class StatusableTest < Minitest::Unit::TestCase
 
   # if calling status returns :Q for Queued, make sure this
   def test_status_sym
+    @job.status = nil
+    assert ! @job.submitted?
+    assert @job.not_submitted?
+
     @job.status = :Q
 
     assert @job.submitted?

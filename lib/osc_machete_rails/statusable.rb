@@ -4,7 +4,7 @@ module OscMacheteRails
   module Statusable
 
 
-    delegate :submitted?, :completed?, :passed?, :failed?, :active?, to: :status
+    delegate :not_submitted?, :submitted?, :completed?, :passed?, :failed?, :active?, to: :status
 
     def status=(s)
       super(OSC::Machete::Status.new(s).char)
