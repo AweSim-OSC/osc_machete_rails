@@ -7,7 +7,7 @@ module OscMacheteRails
     delegate :submitted?, :completed?, :passed?, :failed?, :active?, to: :status
 
     def status=(s)
-      super(s.nil? ? s : OSC::Machete::Status.new(s).char)
+      super(OSC::Machete::Status.new(s).char)
     end
 
     # getter returns a Status value from CHAR or a Status value
