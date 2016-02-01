@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
   s.test_files = Dir["test/**/*"]
 
   s.add_dependency "rails", "~> 4.0.0"
-  # s.add_dependency "osc-machete", "~> 1.0.0.pre7"
+  s.add_dependency "osc-machete", "~> 1.0.0.rc1"
   s.add_dependency "awesim_rails", "~> 0.8.0"
 
   s.add_development_dependency "sqlite3"
