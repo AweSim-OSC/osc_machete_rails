@@ -7,7 +7,7 @@ module OscMacheteRails
     delegate :submitted?, :completed?, :passed?, :failed?, :active?, to: :status
 
     def status=(s)
-      super(s.nil? ? s : s.to_s)
+      super(s.nil? ? s : OSC::Machete::Status.new(s).char)
     end
 
     # getter returns a Status value from CHAR or a Status value
@@ -67,12 +67,12 @@ module OscMacheteRails
       # scope to get all of the jobs that are in an active state
       # or have a pbsid
       def active
-        # FIXME: what about OR i.e. where 
+        # FIXME: what about OR i.e. where
         #
         #     status in active_values OR (pbsid != null and status == null)
         #
         # will need to use STRING for the sql instead of this.
-        where(status: OSC::Machete::Status.active_values.map(&:to_s))
+        where(status: OSC::Machete::Status.active_values.map(&:char))
       end
     end
 

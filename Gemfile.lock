@@ -3,8 +3,14 @@ PATH
   specs:
     osc_machete_rails (0.0.1)
       awesim_rails (~> 0.8.0)
-      osc-machete (~> 1.0.0.pre6)
       rails (~> 4.0.0)
+
+PATH
+  remote: /nfs/17/efranz/dev/osc-machete
+  specs:
+    osc-machete (1.0.0.pre7)
+      mustache
+      pbs (~> 0.4, >= 0.4.3)
 
 GEM
   remote: https://rubygems.org/
@@ -53,9 +59,6 @@ GEM
       metaclass (~> 0.0.1)
     multi_json (1.8.2)
     mustache (0.99.5)
-    osc-machete (1.0.0.pre6)
-      mustache
-      pbs
     pbs (0.4.3)
       ffi (~> 1.9, >= 1.9.6)
     polyglot (0.3.3)
@@ -102,5 +105,6 @@ DEPENDENCIES
   bootstrap_form (~> 2.3.0)
   minitest
   mocha
+  osc-machete!
   osc_machete_rails!
   sqlite3

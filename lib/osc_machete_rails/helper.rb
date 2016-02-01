@@ -2,7 +2,7 @@ module OscMacheteRails
   module Helper
     def status_label(job)
       job ||= OpenStruct.new status: OSC::Machete::Status.not_submitted
-      text = job.status.inspect
+      text = job.status.to_s
 
       label_class = 'label-default'
       if job.failed?
