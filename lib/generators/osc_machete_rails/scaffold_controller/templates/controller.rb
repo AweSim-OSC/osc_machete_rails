@@ -93,11 +93,11 @@ class <%= controller_class_name %>Controller < ApplicationController
 
     respond_to do |format|
       if @<%= orm_instance.save %>
-        format.html { redirect_to <%= plural_table_name %>_path, notice: <%= "'#{human_name} was successfully created.'" %> }
+        format.html { redirect_to <%= index_helper %>_url, notice: <%= "'#{human_name} was successfully copied.'" %> }
         format.json { render :show, status: :created, location: @<%= singular_table_name %> }
       else
-        format.html { render :new }
-        format.json { render json: @<%= orm_instance.errors %>, status: "'Unable to copy #{human_name}.'" }
+        format.html { redirect_to <%= index_helper %>_url, alert: <%= "\"#{human_name} failed to be copied: \#{@#{orm_instance.errors}.to_a}\"" %> }
+        format.json { render json: @<%= orm_instance.errors %>, status: :unprocessable_entity }
       end
     end
   end
