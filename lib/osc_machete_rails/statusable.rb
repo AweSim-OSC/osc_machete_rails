@@ -31,20 +31,22 @@ module OscMacheteRails
       # add class methods
       obj.send(:extend, ClassMethods)
 
-      # Store job object info in a JSON column and replace old column methods
-      if obj.respond_to?(:column_names) && obj.column_names.include?('job_cache')
-        obj.store :job_cache, accessors: [ :script, :pbsid, :host ], coder: JSON
-        delegate :script_name, to: :job
-        define_method :job_path do
-          job.path
-        end
-      else
-        define_method(:job_cache) do
-          {
-            script: (job_path && script_name) ? Pathname.new(job_path).join(script_name) : nil,
-            pbsid: pbsid,
-            host: nil
-          }
+      obj.class_eval do
+        # Store job object info in a JSON column and replace old column methods
+        if respond_to?(:column_names) && column_names.include?('job_cache')
+          store :job_cache, accessors: [ :script, :pbsid, :host ], coder: JSON
+          delegate :script_name, to: :job
+          define_method :job_path do
+            job.path
+          end
+        else
+          define_method(:job_cache) do
+            {
+              script: (job_path && script_name) ? Pathname.new(job_path).join(script_name) : nil,
+              pbsid: pbsid,
+              host: nil
+            }
+          end
         end
       end
     end
