@@ -93,7 +93,7 @@ class <%= controller_class_name %>Controller < ApplicationController
 
     respond_to do |format|
       if @<%= orm_instance.save %>
-        format.html { redirect_to <%= index_helper %>_url, notice: <%= "'#{human_name} was successfully copied.'" %> }
+        format.html { redirect_to @<%= singular_table_name %>, notice: <%= "'#{human_name} was successfully copied.'" %> }
         format.json { render :show, status: :created, location: @<%= singular_table_name %> }
       else
         format.html { redirect_to <%= index_helper %>_url, alert: <%= "\"#{human_name} failed to be copied: \#{@#{orm_instance.errors}.to_a}\"" %> }
