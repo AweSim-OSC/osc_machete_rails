@@ -85,9 +85,9 @@ module OscMacheteRails
     # @param [Job] new_job The Job object to be assigned to the Statusable instance.
     def job=(new_job)
       if self.has_attribute?(:job_cache)
-        job_cache[:script] = new_job.script_path.to_s
-        job_cache[:pbsid] = new_job.pbsid
-        job_cache[:host] = new_job.host if new_job.respond_to?(:host)
+        self.script = new_job.script_path.to_s
+        self.pbsid = new_job.pbsid
+        self.host = new_job.host if new_job.respond_to?(:host)
       else
         self.script_name = new_job.script_name
         self.job_path = new_job.path.to_s
