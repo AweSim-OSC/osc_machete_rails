@@ -91,7 +91,15 @@ class <%= controller_class_name %>Controller < ApplicationController
   def copy
     @<%= singular_table_name %> = @<%= singular_table_name %>.copy
 
-    render template: "<%= plural_table_name %>/edit"
+    respond_to do |format|
+      if @<%= orm_instance.save %>
+        format.html { redirect_to <%= plural_table_name %>_path, notice: <%= "'#{human_name} was successfully created.'" %> }
+        format.json { render :show, status: :created, location: @<%= singular_table_name %> }
+      else
+        format.html { render :new }
+        format.json { render json: @<%= orm_instance.errors %>, status: "'Unable to copy #{human_name}.'" }
+      end
+    end
   end
 
   private
