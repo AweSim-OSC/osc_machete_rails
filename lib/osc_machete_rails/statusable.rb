@@ -33,7 +33,7 @@ module OscMacheteRails
 
       obj.class_eval do
         # Store job object info in a JSON column and replace old column methods
-        if respond_to?(:column_names) && column_names.include?('job_cache')
+        if respond_to?(:table_exists?) && table_exists? && respond_to?(:column_names) && column_names.include?('job_cache')
           store :job_cache, accessors: [ :script, :pbsid, :host ], coder: JSON
           delegate :script_name, to: :job
           define_method :job_path do
