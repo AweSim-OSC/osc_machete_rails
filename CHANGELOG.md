@@ -12,7 +12,10 @@ added features and fixed defects that this gem introduces.
 
 ### Fixed
 
-TODO
+- `update_status!` on the `Job` models (models that include `OscMacheteRails::Statusable`) is called at beginning of each request instead of in the `after_find` hook, so you no longer need to preload to trigger the update (a big hangup we had earlier for each new developer)
+- even if you did preload for the `Job` models, superfluous sql calls were being made for each model - this was eliminated
+- with the latest version of torque new status values were causing problems with status display on simulations. Introducing the Status value object fixed this problem
+- proper error handling avoided various odd behavior that resulted if job submission failed
 
 ### Added
 
