@@ -6,10 +6,7 @@ class ErrorHandlingTest < ActionDispatch::IntegrationTest
   # these tests are for 
 
   def setup
-    # defaults
-    OSC::Machete::TorqueHelper.any_instance.stubs(:qstat).raises(PBS::Error, "The system is down!")
-    OSC::Machete::TorqueHelper.any_instance.stubs(:qdel).raises(PBS::Error, "The system is down!")
-    OSC::Machete::TorqueHelper.any_instance.stubs(:qsub).raises(PBS::Error, "The system is down!")
+    setup_torquehelper
 
     # FIXME: better to create simulations from doing a request to post a new sim
     @sim = Simulation.create
@@ -19,6 +16,18 @@ class ErrorHandlingTest < ActionDispatch::IntegrationTest
     @empty_template = @empty_template.realpath
 
     ::AwesimRails.dataroot = Pathname.new(@tmpdir)
+  end
+
+  def setup_torquehelper
+    # defaults
+    OSC::Machete::TorqueHelper.any_instance.unstub(:qstat)
+    OSC::Machete::TorqueHelper.any_instance.unstub(:qdel)
+    OSC::Machete::TorqueHelper.any_instance.unstub(:qsub)
+
+    # use subclasses of PBS::Error
+    OSC::Machete::TorqueHelper.any_instance.stubs(:qstat).raises(PBS::SystemError, "The system is down!")
+    OSC::Machete::TorqueHelper.any_instance.stubs(:qdel).raises(PBS::BadhostError, "The system is down!")
+    OSC::Machete::TorqueHelper.any_instance.stubs(:qsub).raises(PBS::BadatvalError, "The system is down!")
   end
 
   def teardown
@@ -79,8 +88,8 @@ class ErrorHandlingTest < ActionDispatch::IntegrationTest
     assert Simulation.find(@sim.id).status.queued?
     assert Simulation.find(@sim.id).simulation_jobs.count == 1
 
-    # after submission succeeds, qstat-ing fails, we must handle it gracefully
-    OSC::Machete::TorqueHelper.any_instance.stubs(:qsub).raises(PBS::Error, "The system is down!")
+    # reset
+    setup_torquehelper
   end
 
 
@@ -106,9 +115,8 @@ class ErrorHandlingTest < ActionDispatch::IntegrationTest
     @s2.delete
     @s3.delete
 
-    # original
-    OSC::Machete::TorqueHelper.any_instance.unstub(:qstat)
-    OSC::Machete::TorqueHelper.any_instance.stubs(:qstat).raises(PBS::Error, "The system is down!")
+    # reset
+    setup_torquehelper
   end
 
 
@@ -151,10 +159,8 @@ class ErrorHandlingTest < ActionDispatch::IntegrationTest
 
     assert_response :found
 
-    # after submission succeeds, qstat-ing fails, we must handle it gracefully
-    OSC::Machete::TorqueHelper.any_instance.stubs(:qsub).raises(PBS::Error, "The system is down!")
-    OSC::Machete::TorqueHelper.any_instance.stubs(:qstat).raises(PBS::Error, "The system is down!")
-    OSC::Machete::TorqueHelper.any_instance.stubs(:qdel).raises(PBS::Error, "The system is down!")
+    # reset
+    setup_torquehelper
   end
 end
 
