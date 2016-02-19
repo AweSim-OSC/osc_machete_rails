@@ -5,6 +5,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.0.1] - 2016-02-19
+
+### Fixed
+
+- Fix module used so Statusable.update_status_of_all_active_jobs is called on each request
+
 ## 1.0.0 - 2016-02-03
 
 This release notes changes from existing files pulled out of osc-machete gem and
@@ -49,5 +55,6 @@ statusable.rb (from v0.6.3 of osc-machete to latest osc_machete_rails)
 ### Removed
 
 
-[Unreleased]: https://github.com/AweSim-OSC/osc_machete_rails/compare/v1.0.0...master
+[Unreleased]: https://github.com/AweSim-OSC/osc_machete_rails/compare/v1.0.1...master
+[1.0.1]: https://github.com/AweSim-OSC/osc_machete_rails/compare/v1.0.0...v1.0.1
 
