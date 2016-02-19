@@ -58,8 +58,12 @@ module OscMacheteRails
     # for each Statusable, call update_status! on active jobs
     def self.update_status_of_all_active_jobs
       # to eager load classes, set config.eager_load to true or execute Rails.application.eager_load!
-      Rails.logger.warn "Statusable.classes Array is empty. This should contain a list of all the classes that include Statusable. " \
-        "This could occur if the Rails app is not configured to eager load classes." if self.classes.empty?
+      if self.classes.empty?
+        Rails.logger.warn "Statusable.classes Array is empty. This should contain a list of all the classes that include Statusable. " \
+          "This could occur if the Rails app is not configured to eager load classes."
+      else
+        Rails.logger.debug "Updating active job statuses via Statusable.update_status_of_all_active_jobs."
+      end
 
       self.classes.each do |klass|
         klass.active.to_a.each(&:update_status!) if klass.respond_to?(:active)
