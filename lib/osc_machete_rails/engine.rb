@@ -16,8 +16,8 @@ module OscMacheteRails
       if OscMacheteRails.update_status_of_all_active_jobs_on_each_request
         # set before action on both Engine controllers and main App controllers
         # to update the status of all the active jobs
-        ::ApplicationController.before_action -> { OSC::Machete::SimpleJob::Statusable.update_status_of_all_active_jobs }
-        ApplicationController.before_action -> { OSC::Machete::SimpleJob::Statusable.update_status_of_all_active_jobs }
+        ::ApplicationController.before_action -> { OscMacheteRails::Statusable.update_status_of_all_active_jobs }
+        ApplicationController.before_action -> { OscMacheteRails::Statusable.update_status_of_all_active_jobs }
       end
     end
   end
