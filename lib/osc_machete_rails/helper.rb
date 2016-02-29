@@ -1,6 +1,6 @@
 module OscMacheteRails
   module Helper
-    def status_label(job)
+    def status_label(job, tag = :span)
       job ||= OpenStruct.new status: OSC::Machete::Status.not_submitted
       text = job.status.to_s
 
@@ -14,7 +14,7 @@ module OscMacheteRails
         label_class = 'label-primary'
       end
 
-      content_tag :span, class: %I(label #{label_class}) do
+      content_tag tag, class: %I(status-label label #{label_class}) do
         text
       end
     end
