@@ -31,29 +31,34 @@ module OscMacheteRails
       # add class methods
       obj.send(:extend, ClassMethods)
 
-      obj.class_eval do
-        # Store job object info in a JSON column and replace old column methods
-        if respond_to?(:table_exists?) && table_exists? && respond_to?(:column_names) && column_names.include?('job_cache')
-          store :job_cache, accessors: [ :script, :pbsid, :host ], coder: JSON
-          delegate :script_name, to: :job
-          define_method :job_path do
-            job.path
-          end
-        else
-          define_method(:job_cache) do
-            {
-              script: (job_path && script_name) ? Pathname.new(job_path).join(script_name) : nil,
-              pbsid: pbsid,
-              host: nil
-            }
+      begin
+        obj.class_eval do
+          # Store job object info in a JSON column and replace old column methods
+          if respond_to?(:table_exists?) && table_exists? && respond_to?(:column_names) && column_names.include?('job_cache')
+            store :job_cache, accessors: [ :script, :pbsid, :host ], coder: JSON
+            delegate :script_name, to: :job
+            define_method :job_path do
+              job.path
+            end
+          else
+            define_method(:job_cache) do
+              {
+                script: (job_path && script_name) ? Pathname.new(job_path).join(script_name) : nil,
+                pbsid: pbsid,
+                host: nil
+              }
+            end
           end
         end
+      rescue StandardError => e
+        msg = "\nIf you are precompiling assets, you can ignore this:\n\tError thrown: #{e.inspect}"
+        msg += "\n\tError thrown in OscMacheteRails::Statusable.included when trying to add job_cache to the class including Statusable: #{obj.name}."
+        msg += "\n\tjob_cache method was not added to class." unless obj.method_defined? :job_cache
+        msg += "\n\n"
+        STDERR.puts msg
       end
-    rescue StandardError => e
-      msg = "Error thrown during OscMacheteRails::Statusable.included called by class: #{obj.name}."
-      msg += "\n\tjob_cache method was not added to class." unless obj.method_defined? :job_cache
-      STDERR.puts "\nIf you are precompiling assets, you can ignore this:\n\tError thrown: #{e.inspect}\n\t#{msg}\n\n"
     end
+
 
     def self.classes
       @classes ||= []
