@@ -5,6 +5,17 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.1.0] - 2016-03-03
+
+### Fixed
+
+- fix precompiling assets when a database is not available (which almost always happens when you go to share an app)
+
+### Changed
+
+- status_label view helper now accepts a second optional argument specifying the tag that wraps the label (defaults to span)
+- status_label view helper now adds the class `status_label` to the labels for easier customization of the labels
+
 ## [1.0.1] - 2016-02-19
 
 ### Fixed
@@ -55,6 +66,7 @@ statusable.rb (from v0.6.3 of osc-machete to latest osc_machete_rails)
 ### Removed
 
 
-[Unreleased]: https://github.com/AweSim-OSC/osc_machete_rails/compare/v1.0.1...master
+[Unreleased]: https://github.com/AweSim-OSC/osc_machete_rails/compare/v1.1.0...master
+[1.1.0]: https://github.com/AweSim-OSC/osc_machete_rails/compare/v1.0.1...v1.1.0
 [1.0.1]: https://github.com/AweSim-OSC/osc_machete_rails/compare/v1.0.0...v1.0.1
 
