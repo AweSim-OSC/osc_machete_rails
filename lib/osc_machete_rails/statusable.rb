@@ -49,6 +49,10 @@ module OscMacheteRails
           end
         end
       end
+    rescue StandardError => e
+      msg = "Error thrown during OscMacheteRails::Statusable.included called by class: #{obj.name}."
+      msg += "\n\tjob_cache method was not added to class." unless obj.method_defined? :job_cache
+      STDERR.puts "\nIf you are precompiling assets, you can ignore this:\n\tError thrown: #{e.inspect}\n\t#{msg}\n\n"
     end
 
     def self.classes
