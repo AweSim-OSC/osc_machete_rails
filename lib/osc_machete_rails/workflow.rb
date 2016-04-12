@@ -85,7 +85,7 @@ module OscMacheteRails
       # Creates a new staging target job directory on the system
       # Copies the staging template directory to the staging target job directory
       #
-      # @return [String] The staged directory path.
+      # @return [Pathname] The staged directory path.
       def stage
         staged_dir = OSC::Machete::JobDir.new(staging_target_dir).new_jobdir
         FileUtils.mkdir_p staged_dir
