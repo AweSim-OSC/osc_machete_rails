@@ -1,5 +1,4 @@
 require 'test_helper'
-require 'awesim_rails'
 
 class ErrorHandlingTest < ActionDispatch::IntegrationTest
 
@@ -15,7 +14,8 @@ class ErrorHandlingTest < ActionDispatch::IntegrationTest
     FileUtils.mkdir(@empty_template.to_s)
     @empty_template = @empty_template.realpath
 
-    ::AwesimRails.dataroot = Pathname.new(@tmpdir)
+    # so Workflow#ood_dataroot is set
+    ENV['OOD_DATAROOT'] = @tmpdir
   end
 
   def setup_torquehelper

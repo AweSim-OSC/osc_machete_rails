@@ -41,7 +41,16 @@ module OscMacheteRails
         end
       end
 
-      # Returns the name of the class with underscores.
+      def ood_dataroot
+        if defined? OodAppkit
+          OodAppkit.dataroot
+        elsif ENV['OOD_DATAROOT'] || ENV['RAILS_DATAROOT']
+          Pathname.new(ENV['OOD_DATAROOT'] || ENV['RAILS_DATAROOT'])
+        else
+          raise "no ood_dataroot specified"
+        end
+      end
+
       #
       # @example Underscore a class
       #   FlowratePerformanceRun => flowrate_performance_run
@@ -69,9 +78,8 @@ module OscMacheteRails
       # @raise [Exception] "override staging_target_dir or include awesim_rails gem"
       #
       # @return [String] The staging target directory path.
-      def staging_target_dir
-        raise "override staging_target_dir or include awesim_rails gem" unless defined? AwesimRails
-        AwesimRails.dataroot.join(staging_target_dir_name)
+      def staging_target_dir(dataroot: ood_dataroot)
+        Pathname.new(dataroot).join(staging_target_dir_name)
       end
 
       # Gets the staging template directory path.
