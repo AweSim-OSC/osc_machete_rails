@@ -12,8 +12,3 @@ And then execute:
 
     $ bundle install
 
-
-
-## Usage
-
-**TODO**
