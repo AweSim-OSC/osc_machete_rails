@@ -12,6 +12,7 @@ Gem::Specification.new do |s|
   s.email       = ["efranz@osc.edu"]
   s.homepage    = "https://github.com/OSC/osc_machete_rails"
   s.summary     = "Build Rails apps to manage batch jobs (currently OSC specific)"
+  s.description = "Build Rails apps to manage batch jobs (currently OSC specific). Provides generators and a Rails plugin."
   s.license     = "MIT"
 
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]
