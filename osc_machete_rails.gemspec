@@ -7,11 +7,11 @@ require "osc_machete_rails/version"
 Gem::Specification.new do |s|
   s.name        = "osc_machete_rails"
   s.version     = OscMacheteRails::VERSION
+  s.platform    = Gem::Platform::RUBY
   s.authors     = ["Eric Franz"]
   s.email       = ["efranz@osc.edu"]
-  s.homepage    = "http://www.awesim.org"
-  s.summary     = "AweSim"
-  s.description = "Rails backend for appkit."
+  s.homepage    = "https://github.com/OSC/osc_machete_rails"
+  s.summary     = "Build Rails apps to manage batch jobs (currently OSC specific)"
   s.license     = "MIT"
 
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]
@@ -19,7 +19,6 @@ Gem::Specification.new do |s|
 
   s.add_dependency "rails", "~> 4.0"
   s.add_dependency "osc-machete", "~> 1.0"
-  # s.add_dependency "awesim_rails", "~> 1.0"
 
   s.add_development_dependency "sqlite3"
   s.add_development_dependency "mocha"
