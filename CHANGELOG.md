@@ -5,6 +5,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+
+- remove `AwesimRails` as a dependency
+
 ## [1.1.0] - 2016-03-03
 
 ### Fixed
