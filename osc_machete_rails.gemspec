@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
   s.description = "Build Rails apps to manage batch jobs (currently OSC specific). Provides generators and a Rails plugin."
   s.license     = "MIT"
 
-  s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]
+  s.files = Dir["{app,config,db,lib}/**/*", "LICENSE.txt", "Rakefile", "README.md", "CHANGELOG.md"]
   s.test_files = Dir["test/**/*"]
 
   s.add_dependency "rails", "~> 4.0"
