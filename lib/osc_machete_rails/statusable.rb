@@ -144,7 +144,7 @@ module OscMacheteRails
     def results_valid?
       valid = true
 
-      if self.respond_to? :script_name && !script_name.nil?
+      if self.respond_to?(:script_name) && !script_name.nil?
         if self.respond_to?(results_validation_method_name)
           valid = self.send(results_validation_method_name)
         end
