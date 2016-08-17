@@ -19,12 +19,12 @@ Gem::Specification.new do |s|
   s.test_files = Dir["test/**/*"]
 
   s.add_dependency "rails", "~> 4.0"
-  s.add_dependency "osc-machete", "~> 1.0"
+  s.add_dependency "osc-machete", "~> 2.0.0.pre"
 
   s.add_development_dependency "sqlite3"
   s.add_development_dependency "mocha"
   s.add_development_dependency "minitest"# , ">= 5.0"
-  s.add_development_dependency "pbs", "~>1.1"
+  s.add_development_dependency "pbs", "~> 2.0"
 
   # dummy app needs these
   s.add_development_dependency "bootstrap_form", "~> 2.3.0"
