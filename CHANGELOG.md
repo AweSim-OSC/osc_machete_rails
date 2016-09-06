@@ -5,6 +5,17 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.2.2] - 2016-07-26
+
+### Changed
+
+- dependency from osc-machete 1.1 to 1.2 which ups the pbs dependency to 2.0
+
+### Fixed
+
+- use latest version of osc-machete gem so `Job#host` exists so after submitting a
+  job we save the host to the database
+
 ## [1.2.1] - 2016-07-26
 
 ### Fixed
@@ -81,7 +92,8 @@ statusable.rb (from v0.6.3 of osc-machete to latest osc_machete_rails)
 ### Removed
 
 
-[Unreleased]: https://github.com/AweSim-OSC/osc_machete_rails/compare/v1.2.1...master
+[Unreleased]: https://github.com/AweSim-OSC/osc_machete_rails/compare/v1.2.2...master
+[1.2.2]: https://github.com/AweSim-OSC/osc_machete_rails/compare/v1.2.1...v1.2.2
 [1.2.1]: https://github.com/AweSim-OSC/osc_machete_rails/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/AweSim-OSC/osc_machete_rails/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/AweSim-OSC/osc_machete_rails/compare/v1.0.1...v1.1.0
