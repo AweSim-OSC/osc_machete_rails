@@ -5,9 +5,15 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.2.0] - 2016-06-07
+
+
 ### Changed
 
 - remove `AwesimRails` as a dependency
+- README and spec changes for rubygems release
+- `Workflow#staging_target_dir` now accepts `dataroot` path keyword argument
+- change Rails dependency to allow any minor version of Rails 4
 
 ## [1.1.0] - 2016-03-03
 
@@ -70,7 +76,8 @@ statusable.rb (from v0.6.3 of osc-machete to latest osc_machete_rails)
 ### Removed
 
 
-[Unreleased]: https://github.com/AweSim-OSC/osc_machete_rails/compare/v1.1.0...master
+[Unreleased]: https://github.com/AweSim-OSC/osc_machete_rails/compare/v1.2.0...master
+[1.2.0]: https://github.com/AweSim-OSC/osc_machete_rails/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/AweSim-OSC/osc_machete_rails/compare/v1.0.1...v1.1.0
 [1.0.1]: https://github.com/AweSim-OSC/osc_machete_rails/compare/v1.0.0...v1.0.1
 
