@@ -153,44 +153,6 @@ module OscMacheteRails
       valid
     end
 
-    # return string "3950166" whether the is "3950166" or "3960166.oak-batch.osc.edu"
-    def pbsid_number
-      self.pbsid =~ /(\d+)(\..*)?/
-      $1
-    end
-
-    # return first path found for the given filename/path or glob pattern relative
-    # to the job's directory
-    def job_file_path(file)
-      Pathname.glob("#{self.job_path}/#{file}").first
-    end
-
-    def output_file_path
-      self.job_file_path "*.o#{self.pbsid_number}"
-    end
-
-    def error_file_path
-      self.job_file_path "*.e#{self.pbsid_number}"
-    end
-
-    # path relative to dataroot
-    def output_file_relative_path
-      self.output_file_path.relative_path_from(AwesimRails.dataroot) if self.output_file_path
-    end
-
-    # path relative to dataroot
-    def error_file_relative_path
-      self.error_file_path.relative_path_from(AwesimRails.dataroot) if self.error_file_path
-    end
-
-    def output_file_contents
-      self.output_file_path ? self.output_file_path.read : ""
-    end
-
-    def error_file_contents
-      self.error_file_path ? self.error_file_path.read : ""
-    end
-
     #FIXME: should have a unit test for this!
     # job.update_status! will update and save object
     # if submitted? and ! completed? and status changed from previous state
