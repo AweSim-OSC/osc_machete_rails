@@ -14,9 +14,22 @@ module OscMacheteRails
       # separate modules to group common methods for readability purposes
       # both builder methods and status methods need the jobs relation so
       # we include that first
+      self.send :extend,  OscMacheteRails::Workflow::DSLMethods
       self.send :include, OscMacheteRails::Workflow::JobsRelation
       self.send :include, OscMacheteRails::Workflow::BuilderMethods
       self.send :include, OscMacheteRails::Workflow::StatusMethods
+    end
+
+    # The module defining the DSL methods used to interact with jobs
+    module DSLMethods
+      def defined_jobs
+        @_jobs
+      end
+
+      def add_job(key, script, opts = {})
+        @_jobs ||= {}
+        @_jobs[key] = {script: script, opts: opts}
+      end
     end
 
     # The module defining the active record relation of the jobs
@@ -143,8 +156,25 @@ module OscMacheteRails
       # @param [Array, Nil] jobs An array of jobs to be built.
       #
       # @raise [NotImplementedError] The method is currently not implemented
-      def build_jobs(staged_dir, jobs = [])
-        raise NotImplementedError, "Objects including OSC::Machete::SimpleJob::Workflow must implement build_jobs"
+      def build_jobs(staged_dir, job_list = [])
+        _jobs = self.class.defined_jobs
+
+        # Build array of jobs
+        _jobs.each do |key, job_hash|
+          script = staged_dir.join(job_hash[:script])
+          job_hash[:_job] = OSC::Machete::Job.new(script: script)
+          job_list << job_hash[:_job]
+        end
+
+        # Add dependencies
+        _jobs.each do |key, job_hash|
+          job_hash[:opts].fetch(:depend, {}).each do |method, job_keys|
+            list = [*job_keys].map { |job_key| _jobs[job_key][:_job] }
+            job_hash[:_job].send(method, list)
+          end
+        end
+
+        job_list
       end
 
       # Call the #submit method on each job in a hash.

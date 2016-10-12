@@ -21,10 +21,9 @@ class <%= class_name %> < <%= parent_class_name.classify %>
   #   # CODE HERE
   # end
 
-  # Build an array of Machete jobs that are then submitted to the batch server
-  def build_jobs(staged_dir, job_list = [])
-    job_list << OSC::Machete::Job.new(script: staged_dir.join("main.sh"))
-  end
+  # Add jobs to workflow
+  add_job :main, "main.sh"
+  # add_job :post, "post.sh", depend: { afterany: :main }
 
   # Make copy of workflow
   def copy
