@@ -30,5 +30,13 @@ Rake::TestTask.new(:test) do |t|
   t.verbose = false
 end
 
+task :console do
+  require 'irb'
+  require 'irb/completion'
+  require 'osc/machete'
+  require 'osc_machete_rails'
+  ARGV.clear
+  IRB.start
+end
 
 task default: :test
