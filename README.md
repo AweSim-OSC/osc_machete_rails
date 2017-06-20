@@ -12,3 +12,8 @@ And then execute:
 
     $ bundle install
 
+## Usage
+
+### Generators
+
+See [USAGE](lib/generators/osc_machete_rails/USAGE) guidelines for details and examples.
