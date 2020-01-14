@@ -1,4 +1,5 @@
 require 'minitest/autorun'
+require 'mocha/setup'
 require 'osc/machete'
 
 class StatusableTest < Minitest::Unit::TestCase
