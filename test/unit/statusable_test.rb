@@ -1,8 +1,8 @@
 require 'minitest/autorun'
-require 'mocha/setup'
+require 'mocha/minitest'
 require 'osc/machete'
 
-class StatusableTest < Minitest::Unit::TestCase
+class StatusableTest < Minitest::Test
   # FIXME: the problem here: we are extending, not including, so
   # Statusable#included never called
   # 
