@@ -13,6 +13,10 @@ Rails.backtrace_cleaner.remove_silencers!
 # Load support files
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
 
+# install the rails 5 gem
+require 'rails-controller-testing'
+Rails::Controller::Testing.install
+
 # Load fixtures from the engine
 if ActiveSupport::TestCase.method_defined?(:fixture_path=)
   ActiveSupport::TestCase.fixture_path = File.expand_path("../fixtures", __FILE__)

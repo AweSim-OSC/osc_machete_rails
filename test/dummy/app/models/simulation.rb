@@ -1,4 +1,4 @@
-class Simulation < ActiveRecord::Base
+class Simulation < ApplicationRecord
   has_many :simulation_jobs, dependent: :destroy
   has_machete_workflow_of :simulation_jobs
 
@@ -23,4 +23,5 @@ class Simulation < ActiveRecord::Base
   def copy
     self.dup
   end
+
 end
