@@ -1,4 +1,4 @@
-class CreateSimulationJobs < ActiveRecord::Migration
+class CreateSimulationJobs < ActiveRecord::Migration[4.2]
   def change
     create_table :simulation_jobs do |t|
       t.string :name

@@ -1,4 +1,3 @@
-# encoding: UTF-8
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -11,26 +10,25 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151230193911) do
+ActiveRecord::Schema.define(version: 2015_12_30_193911) do
 
-  create_table "simulation_jobs", force: true do |t|
-    t.string   "name"
-    t.float    "pressure"
-    t.integer  "simulation_id"
-    t.string   "status"
-    t.string   "pbsid"
-    t.string   "job_path"
-    t.string   "script_name"
+  create_table "simulation_jobs", force: :cascade do |t|
+    t.string "name"
+    t.float "pressure"
+    t.integer "simulation_id"
+    t.string "status"
+    t.string "pbsid"
+    t.string "job_path"
+    t.string "script_name"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.index ["simulation_id"], name: "index_simulation_jobs_on_simulation_id"
   end
 
-  add_index "simulation_jobs", ["simulation_id"], name: "index_simulation_jobs_on_simulation_id"
-
-  create_table "simulations", force: true do |t|
-    t.string   "name"
-    t.float    "pressure"
-    t.string   "staged_dir"
+  create_table "simulations", force: :cascade do |t|
+    t.string "name"
+    t.float "pressure"
+    t.string "staged_dir"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

@@ -55,12 +55,20 @@ class SimulationsController < ApplicationController
   # DELETE /simulations/1.json
   def destroy
     respond_to do |format|
-      if @simulation.destroy
+      # this shouldn't need a rescue, should just be if/else but the rails-controller-testing added
+      # in rails 5 doesn't seem to want to actually rescue exceptions in simulation.destroy and do it's
+      # rails magic, but instead they bubble up into the test case. so we force the rescue here
+      # and add it to simulation.errors.
+      begin
+        @simulation.destroy
         format.html { redirect_to simulations_url, notice: 'Simulation was successfully destroyed.' }
         format.json { head :no_content }
-      else
+
+      rescue PBS::BadhostError => e
+        @simulation.errors.add(:name, :not_implemented, message: e.to_s)
         format.html { render :show, status: 500, alert: 'A problem occurred when trying to destroy the simulation.' }
         format.json { render json: @simulation.errors, status: 500 }
+        next
       end
     end
   end

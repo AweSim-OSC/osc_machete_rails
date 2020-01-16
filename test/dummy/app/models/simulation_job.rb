@@ -1,4 +1,4 @@
-class SimulationJob < ActiveRecord::Base
+class SimulationJob < ApplicationRecord
   # Here we test the deprecated include method instead of the new
   # OscMacheteRails::Statusable
   # We will want both to work...
