@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+## [1.3.0] - 2020-01-21
+
+### Changed
+
+- dependency on rails has been increased from 4.2 to > 5.
+  -  this changed a lot in the test cases, nothing in the actual library.
 
 ## [1.2.2] - 2016-07-26
 
@@ -92,7 +98,8 @@ statusable.rb (from v0.6.3 of osc-machete to latest osc_machete_rails)
 ### Removed
 
 
-[Unreleased]: https://github.com/AweSim-OSC/osc_machete_rails/compare/v1.2.2...master
+[Unreleased]: https://github.com/AweSim-OSC/osc_machete_rails/compare/v1.3.0...master
+[1.3.0]: https://github.com/AweSim-OSC/osc_machete_rails/compare/v1.2.2...v1.3.0
 [1.2.2]: https://github.com/AweSim-OSC/osc_machete_rails/compare/v1.2.1...v1.2.2
 [1.2.1]: https://github.com/AweSim-OSC/osc_machete_rails/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/AweSim-OSC/osc_machete_rails/compare/v1.1.0...v1.2.0
