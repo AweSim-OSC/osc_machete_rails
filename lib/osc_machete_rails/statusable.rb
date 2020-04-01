@@ -133,7 +133,7 @@ module OscMacheteRails
     # @return [String] A string representing a validation method name from script_name attr
     # using ActiveSupport methods
     def results_validation_method_name
-      File.basename(script_name, ".*").underscore.parameterize('_') + "_results_valid?"
+      File.basename(script_name, ".*").underscore.parameterize(separator: '_') + "_results_valid?"
     end
 
     # A hook that can be overidden with custom code
