@@ -122,4 +122,8 @@ class StatusableTest < Minitest::Test
     @job.status = nil
     @job.update_status!
   end
+
+  def test_default_tesults_valid?
+    assert true, @job.results_valid?
+  end
 end
