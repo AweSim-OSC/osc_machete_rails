@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+## [1.3.1] - 2020-04-02
+### Fixed
+
+- Fixed [#71](https://github.com/OSC/osc_machete_rails/pull/71).
+
 ## [1.3.0] - 2020-01-21
 
 ### Changed
@@ -98,11 +103,12 @@ statusable.rb (from v0.6.3 of osc-machete to latest osc_machete_rails)
 ### Removed
 
 
-[Unreleased]: https://github.com/AweSim-OSC/osc_machete_rails/compare/v1.3.0...master
-[1.3.0]: https://github.com/AweSim-OSC/osc_machete_rails/compare/v1.2.2...v1.3.0
-[1.2.2]: https://github.com/AweSim-OSC/osc_machete_rails/compare/v1.2.1...v1.2.2
-[1.2.1]: https://github.com/AweSim-OSC/osc_machete_rails/compare/v1.2.0...v1.2.1
-[1.2.0]: https://github.com/AweSim-OSC/osc_machete_rails/compare/v1.1.0...v1.2.0
-[1.1.0]: https://github.com/AweSim-OSC/osc_machete_rails/compare/v1.0.1...v1.1.0
-[1.0.1]: https://github.com/AweSim-OSC/osc_machete_rails/compare/v1.0.0...v1.0.1
+[Unreleased]: https://github.com/OSC/osc_machete_rails/compare/v1.3.1...master
+[1.3.1]: https://github.com/OSC/osc_machete_rails/compare/v1.3.0...v1.3.1
+[1.3.0]: https://github.com/OSC/osc_machete_rails/compare/v1.2.2...v1.3.0
+[1.2.2]: https://github.com/OSC/osc_machete_rails/compare/v1.2.1...v1.2.2
+[1.2.1]: https://github.com/OSC/osc_machete_rails/compare/v1.2.0...v1.2.1
+[1.2.0]: https://github.com/OSC/osc_machete_rails/compare/v1.1.0...v1.2.0
+[1.1.0]: https://github.com/OSC/osc_machete_rails/compare/v1.0.1...v1.1.0
+[1.0.1]: https://github.com/OSC/osc_machete_rails/compare/v1.0.0...v1.0.1
 
