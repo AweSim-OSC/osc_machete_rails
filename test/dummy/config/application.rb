@@ -15,7 +15,6 @@ module Dummy
     # Application configuration can go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded after loading
     # the framework and any gems in your application.
-    config.active_record.sqlite3.represent_boolean_as_integer = true
 
     # rails 5 update. tests don't create the belongs_to models
     config.active_record.belongs_to_required_by_default = false
